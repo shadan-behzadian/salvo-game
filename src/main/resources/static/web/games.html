@@ -6,10 +6,11 @@
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 </head>
 <body>
+
 <div id="games">
 <ol v-for="game in gamesInfo">
 
-    <li>Date of game creation: {{game.date}}</li>
+    <li>Date of game creation: {{new Date(game.date)}}</li>
     <li>Player Username : {{game.gamePlayers[0].player.email}}</li>
 
 

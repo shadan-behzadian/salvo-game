@@ -28,8 +28,8 @@ public class SalvoController {
         Map<String, Object> dto = new LinkedHashMap<>();
         List<Game> games = gameRepository.findAll();
         dto.put("Games", games
-                .stream()
-                .map(game-> gameDto(game))
+                .stream() //means loop over it, take them one by one.
+                .map(game-> gameDto(game)) //and fot each of them apply this methode, and the methode is defined out of this
         .collect(toList()));
         return dto;
     }

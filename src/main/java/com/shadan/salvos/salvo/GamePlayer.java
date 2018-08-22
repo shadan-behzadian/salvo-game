@@ -2,6 +2,8 @@ package com.shadan.salvos.salvo;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /* FetchType.EAGER tells JPA to make sure that when a gameplayer is loaded
  from the database, the game  data of that game player should be loaded too */
@@ -23,6 +25,10 @@ public class GamePlayer {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name ="player_id")
     private Player player;
+
+    @OneToMany(mappedBy="gameplayer",fetch = FetchType.EAGER)
+    Set<GamePlayer> gamePlayers = new HashSet<>();
+
 
     public GamePlayer(){}
 
@@ -66,6 +72,13 @@ public class GamePlayer {
     public void setOwnerGame(Game game){
 
         this.game = game;
+    }
+
+    public void addShip(Ship ship){
+
+       ship.setOwnerGamePlayer(this);
+        gamePlayers.add(ship);
+
     }
 }
 
