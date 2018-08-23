@@ -1,6 +1,7 @@
 package com.shadan.salvos.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,6 +46,8 @@ public class SalvoController {
                 .collect(toList()));
 
 
+
+
         return dto;
     }
 
@@ -56,14 +59,15 @@ public class SalvoController {
 return dto;
     }
 
-    public  Map<String,Object> playerDto(Player player){
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("id", player.getId());
-        dto.put("email", player.getUserName());
 
-        return dto;
-    }
 
+//    public  Map<String,Object> playerDto(Player player){
+//        Map<String, Object> dto = new LinkedHashMap<>();
+//        dto.put("id", player.getId());
+//        dto.put("email", player.getUserName());
+//
+//        return dto;
+//    }
 
 //first step of plan of attack to get only ID
 //    public List<Long> getListOfGamesId(){
@@ -79,7 +83,63 @@ return dto;
 //    }
 
 
+    @Autowired
+    private GamePlayerRepository gamePlayerRepository;
+
+    @RequestMapping("/game_view/{gamePlayerId}")
+      public Map<String, Object> toGameViewDTO(@PathVariable Long gamePlayerId) {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        //toget game player to acces game info and ship info and ...
+       GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+       dto.put("Id", gamePlayer.getGame().getId());
+       dto.put("created", gamePlayer.getGame().getToday());
+       dto.put("gamePlayers", gamePlayer.getGame().getGameplayers()
+               .stream()
+               .map(gamePlayerExample -> gameplayerDto(gamePlayerExample))
+               .collect(toList()));
+
+
+
+        dto.put("ships",gamePlayer.getShip()
+                .stream()
+                .map(ship -> shipDetail(ship))
+                .collect(toList()));
+
+        return dto;
+
+    }
+
+    public Map<String, Object> shipDetail(Ship ship){
+        Map<String, Object>  dto = new LinkedHashMap<>();
+        dto.put("type", ship.getType());
+        dto.put("location", ship.getLocation());
+        return  dto;
+    }
+
+
+
+public Map<String, Object> gameplayerDto(GamePlayer gamePlayer){
+        Map<String, Object>  dto = new LinkedHashMap<>();
+        dto.put("Id", gamePlayer.getId());
+        dto.put("player", playerDto(gamePlayer.getPlayer()));
+
+
+                return dto;
+
 }
+
+    public  Map<String,Object> playerDto(Player player){
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", player.getId());
+        dto.put("email", player.getUserName());
+
+        return dto;
+    }
+
+
+}
+
+
 
 
 

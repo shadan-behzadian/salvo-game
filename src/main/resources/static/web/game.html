@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ship Locations!</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+<table id="grid">
+
+    <tr >
+        <td v-for="gridColumn in gridColumns">{{gridColumn}}</td>
+    </tr>
+
+<tr v-for="gridRow in gridRows">
+    <td >
+    {{gridRow}}
+
+    </td>
+
+    <td>
+
+
+
+</tr>
+
+
+
+
+</table>
+
+
+<script src="game.js"></script>
+
+</body>
+</html>
