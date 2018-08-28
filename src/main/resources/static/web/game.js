@@ -41,7 +41,7 @@ fetch("http://localhost:8080/api/game_view/" + id, {
     console.log(salvo);
     app2.salvoInfo.push(salvo)}
 
-    positionSalvos()
+    positionSalvos(salvoes);
 
     });
 
@@ -97,6 +97,8 @@ var app2 = new Vue({
                  td.setAttribute("id", gridRows[i]+j);
                                     tr.appendChild(td);
                                  }else{
+                                 //you had to make these ids lowercase because in html the ids should be unique and before
+                                 //you already have capital letter ids
                                  td.setAttribute("id", gridRows[i].toLowerCase() + j);
                                                          tr.appendChild(td);
                                  }
@@ -138,27 +140,67 @@ function positionShips(){
 
 
 
-function positionSalvos() {
+function positionSalvos(salvo) {
 
-    for(i=0; i<app2.salvoInfo.length ; i++){
-    var players = app2.salvoInfo[i]
+    for(i=0; i<salvo.length ; i++){
+//data is a global variableon top of the page   data = json.gamePlayers;
+//here you are getting the gameplayer id of each positon of salvo
+ var playersId = salvo[i][data[i].Id]
+                      console.log(playersId);
+
+
+    for(j=0; j<playersId.length; j++){
+
+
+        for(let turn in playersId[j]){
+            console.log(playersId[j][turn])
+            console.log(turn);
+           for(k=0; k<playersId[j][turn].length; k++){
+
+           console.log(playersId[j][turn][k])
+
+//this line says if the id of the player equals the id of the page then show the shots on the shots table
+if(data[i].Id == id){
+document.getElementById(playersId[j][turn][k].toLowerCase()).setAttribute("class","salvoShots");
+document.getElementById(playersId[j][turn][k].toLowerCase()).textContent = turn;
+//otherwise show them on the main table(the shots of enemmy)
+}else{
+//if the posotion of shots == the positin of already existing ships show the shots: sho you check if that position
+//already has an attribute "class"  to make sure there was a ship there to show the shots
+if(document.getElementById(playersId[j][turn][k]).hasAttribute("class")){
+document.getElementById(playersId[j][turn][k]).setAttribute("class","salvoShots");
+//to show the turn on each of shots
+document.getElementById(playersId[j][turn][k]).textContent = turn;
+}
+}
+
+           }
+
+        }
+
+
+  }}}
+
+
+
+
+
+
+
     //this id is comeing from top of the page you are comparin if you are on the page with gp=1 or gp=2 ,...
     //    var url_string = window.location.href;
     //    var url = new URL(url_string);
     //    var id = url.searchParams.get("gp");
     //    console.log(id);
-    if(players.hasOwnProperty(id)){
-
-    console.log("found", id);
-    }else{
-    console.log("nothing")}
-    console.log(players);
-
-
-    }
+//    if(players.hasOwnProperty(id)){
+//
+//    console.log("found", id);
+//    }else{
+//    console.log("nothing")}
+//    console.log(players);
 
 
-}
+
 
 
 

@@ -95,6 +95,7 @@ public class SalvoController {
         dto.put("created", gamePlayer.getGame().getToday());
         dto.put("gamePlayers", gamePlayer.getGame().getGameplayers()
                 .stream()
+                .sorted((gameplayer1, gameplayer2)->gameplayer1.getId().compareTo(gameplayer2.getId()))
                 .map(gamePlayerExample -> gameplayerDto(gamePlayerExample))
                 .collect(toList()));
 
@@ -121,6 +122,7 @@ public class SalvoController {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put(gameplayer.getId().toString(), gameplayer.getSalvos()
                         .stream()
+                        .sorted((salvo1, salvo2)->salvo1.getId().compareTo(salvo2.getId()))
                         .map(salvo -> salvoDetail(salvo))
                         .collect(toList())
 
@@ -134,6 +136,7 @@ public class SalvoController {
         dto.put(salvo.getTurn().toString(),salvo.getLocation());
         return dto;
     }
+
 
 
 
