@@ -1,8 +1,31 @@
-#grid{
- border: 1px solid black;
-}
+
 
 th, td{
  border: 1px solid black;
+ width: 20px;
+ hight: 20px;
 }
 
+.battleship{
+background-color: red;
+}
+
+.carrier{
+background-color: green;
+}
+
+.patrolBoat{
+background-color: yellow;
+}
+
+.submarine{
+background-color:pink
+}
+
+.destroyer{
+background-color: blue;
+}
+
+.salvoShots{
+background-color:black;
+}

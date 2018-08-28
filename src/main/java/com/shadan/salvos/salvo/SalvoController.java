@@ -19,7 +19,7 @@ public class SalvoController {
     @Autowired
     private GameRepository gameRepository;
 
-//second step in plan of attack to add more details in the object
+    //second step in plan of attack to add more details in the object
     //we ar getting the info of the game first getting ID and date then through game we access de data of gameplayers
     //(remmember it was a onetomany relationship so you need to loop aka stream over it) then through the gameplayer we want
     //to access the player info (remember it was a manytoone relationship, so each gameplayer can only have one player so
@@ -31,7 +31,7 @@ public class SalvoController {
         dto.put("Games", games
                 .stream() //means loop over it, take them one by one.
                 .map(game-> gameDto(game)) //and fot each of them apply this methode, and the methode is defined out of this
-        .collect(toList()));
+                .collect(toList()));
         return dto;
     }
 
@@ -56,7 +56,7 @@ public class SalvoController {
         dto.put("id",gamePlayer.getId());
         dto.put("player", playerDto(gamePlayer.getPlayer()));
 
-return dto;
+        return dto;
     }
 
 
@@ -87,16 +87,16 @@ return dto;
     private GamePlayerRepository gamePlayerRepository;
 
     @RequestMapping("/game_view/{gamePlayerId}")
-      public Map<String, Object> toGameViewDTO(@PathVariable Long gamePlayerId) {
+    public Map<String, Object> toGameViewDTO(@PathVariable Long gamePlayerId) {
         Map<String, Object> dto = new LinkedHashMap<>();
         //toget game player to acces game info and ship info and ...
-       GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
-       dto.put("Id", gamePlayer.getGame().getId());
-       dto.put("created", gamePlayer.getGame().getToday());
-       dto.put("gamePlayers", gamePlayer.getGame().getGameplayers()
-               .stream()
-               .map(gamePlayerExample -> gameplayerDto(gamePlayerExample))
-               .collect(toList()));
+        GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+        dto.put("Id", gamePlayer.getGame().getId());
+        dto.put("created", gamePlayer.getGame().getToday());
+        dto.put("gamePlayers", gamePlayer.getGame().getGameplayers()
+                .stream()
+                .map(gamePlayerExample -> gameplayerDto(gamePlayerExample))
+                .collect(toList()));
 
 
 
@@ -105,9 +105,39 @@ return dto;
                 .map(ship -> shipDetail(ship))
                 .collect(toList()));
 
+        //you need to sort the id of gameplayers so later on they dont changed all the time in the json (the order)
+        dto.put("salvoes",gamePlayer.getGame().getGameplayers()
+                .stream()
+                .sorted((gameplayer1, gameplayer2)->gameplayer1.getId().compareTo(gameplayer2.getId()))
+                .map(gameplayer -> getGameplayer(gameplayer))
+                .collect(toList())
+        );
+
         return dto;
 
     }
+
+    public Map<String, Object> getGameplayer(GamePlayer gameplayer) {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put(gameplayer.getId().toString(), gameplayer.getSalvos()
+                        .stream()
+                        .map(salvo -> salvoDetail(salvo))
+                        .collect(toList())
+
+                );
+        return dto;
+
+    }
+
+    public Map<String, Object> salvoDetail(Salvo salvo) {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put(salvo.getTurn().toString(),salvo.getLocation());
+        return dto;
+    }
+
+
+
+
 
     public Map<String, Object> shipDetail(Ship ship){
         Map<String, Object>  dto = new LinkedHashMap<>();
@@ -118,15 +148,15 @@ return dto;
 
 
 
-public Map<String, Object> gameplayerDto(GamePlayer gamePlayer){
+    public Map<String, Object> gameplayerDto(GamePlayer gamePlayer){
         Map<String, Object>  dto = new LinkedHashMap<>();
         dto.put("Id", gamePlayer.getId());
         dto.put("player", playerDto(gamePlayer.getPlayer()));
 
 
-                return dto;
+        return dto;
 
-}
+    }
 
     public  Map<String,Object> playerDto(Player player){
         Map<String, Object> dto = new LinkedHashMap<>();
@@ -138,15 +168,5 @@ public Map<String, Object> gameplayerDto(GamePlayer gamePlayer){
 
 
 }
-
-
-
-
-
-
-
-
-
-
 
 

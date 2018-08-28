@@ -18,3 +18,5 @@ var app = new Vue({
             gamesInfo:[]
 
        }});
+
+

@@ -1,37 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Ship Locations!</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <link rel="stylesheet" href="game.css">
 </head>
-<body>
-<table id="grid">
+<body >
 
-    <tr >
-        <td v-for="gridColumn in gridColumns">{{gridColumn}}</td>
-    </tr>
+<div id="grid">
+    <p>Your Ships</p>
+<p>{{you}}(you)</p>
+<p>VS</p>
+<p>{{opponent}}(opponent)</p>
+<table >
 
-<tr v-for="gridRow in gridRows">
-    <td >
-    {{gridRow}}
-
-    </td>
-
-    <td>
-
-
-
-</tr>
-
-
-
+<tbody ></tbody>
 
 </table>
+</div>
+
+<div id="salvoGrid">
+    <p>Your Salvos</p>
+
+    <table>
+        <tbody>
+
+        </tbody>
+    </table>
 
 
-<script src="game.js"></script>
+</div>
+
+
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="game.js"></script>
 </html>
