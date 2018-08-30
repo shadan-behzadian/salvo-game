@@ -34,7 +34,8 @@ public class Player {
     @OneToMany(mappedBy="player",fetch = FetchType.EAGER)
     Set<GamePlayer> gameplayers = new HashSet<>();
 
-
+    @OneToMany(mappedBy="player",fetch = FetchType.EAGER)
+    Set<Score> scores = new HashSet<>();
 
     public Player(){}
 
@@ -94,6 +95,34 @@ public class Player {
     public String toString(){
         return firstName + " " + lastName + " " + userName;
     }
+
+
+    public Set<Score> getScores(){
+
+        return scores;
+    }
+
+    public void addScore(Score score){
+
+        score.setOwnerPlayer(this);
+       scores.add(score);
+
+    }
+
+
+ //to get the score of the player based on the game
+//    public Score getScoreOfGame(Game game){
+//      Score score = game.getScores()
+//              .stream()
+//              //this.id here means the id of this player instance
+//              .filter(score1 -> score1.getPlayer().getId() == this.id)
+//              .findFirst()
+//              .orElse(null);
+//
+//
+//       return score;
+//    }
+
 
 }
 

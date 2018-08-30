@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 //controller reads urls sent to the sever to find the approprate java code to create json
@@ -44,11 +45,32 @@ public class SalvoController {
                 .stream()
                 .map(gamePlayer -> gamePlayerDto(gamePlayer))
                 .collect(toList()));
+        //to create the json for scores
+       dto.put("scores", game.getScores()
+               .stream()
+               .map(score -> scoreOfeach(score))
+               .collect(Collectors.toList())
+
+       );
+
+        return dto;
+    }
+
+//to create the json for scores
+    Map<String,Object> scoreOfeach(Score score) {
+
+        Map<String, Object> dto = new LinkedHashMap<>();
+        // System.out.println(gamePlayer.getPlayer().getScoreOfGame(gamePlayer.getGame()).getScore());
+
+            dto.put("playerID", score.getPlayer().getId());
+            dto.put("firstname", score.getPlayer().getFirstName());
+            dto.put("score",score.getScore());
 
 
 
 
         return dto;
+
     }
 
     public  Map<String,Object> gamePlayerDto(GamePlayer gamePlayer){

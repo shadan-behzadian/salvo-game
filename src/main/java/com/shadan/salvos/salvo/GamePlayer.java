@@ -94,6 +94,22 @@ public class GamePlayer {
     public  Set<Salvo> getSalvos(){
         return  this.salvos;
     }
+
+    //the game player is not connected directly to the scores so you use this methode
+    // ******to get the scores for each game player******
+    //and you use findfirst and else(null) so that you filter over scores and get
+    // the score abd if did not exist ...null!!
+
+
+//    public Score getScoresForGamePlayer(){
+//
+//        Score score = this.getPlayer().getScoreOfGame(this.getGame());
+//
+//        return score;
+//    }
+
+
+
 }
 
 

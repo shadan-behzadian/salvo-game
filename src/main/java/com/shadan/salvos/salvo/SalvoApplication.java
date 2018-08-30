@@ -21,14 +21,14 @@ public class SalvoApplication {
 
 	@Bean
 	//annotation to mark a method that returns an instance of a Java bean
-	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository , GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository){
+	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository , GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository,ScoreRepository scoreRepository){
 		return (args)-> {
             Player player1 = playerRepository.save(new Player("Jack","Bauer","j.bauer@ctu.gov"));
             Player player2 = playerRepository.save(new Player("Chloe","O'Brian","shadan_b8@yahoo.com"));
-            Player player3 = playerRepository.save(new Player("valeria","carbonada","valeri.carbonada@gmail.com"));
-            Player player4 = playerRepository.save(new Player("nico","capo","nico.capo@yahoo.com"));
-            Player player5 = playerRepository.save(new Player("Kim","Bauer","kim_bauer@gmail.com"));
-            Player player6 = playerRepository.save(new Player("Tony","capo","t.almeida@ctu.gov"));
+			Player player3 = playerRepository.save(new Player("Kim","Bauer","kim_bauer@gmail.com"));
+			Player player4 = playerRepository.save(new Player("Tony","almeida","t.almeida@ctu.gov"));
+			Player player5 = playerRepository.save(new Player("valeria","carbonada","valeri.carbonada@gmail.com"));
+			Player player6 = playerRepository.save(new Player("nico","capo","nico.capo@yahoo.com"));
 
 			List<Player> players =  playerRepository.findByUserName("shadan");
 			System.out.println(players);
@@ -59,6 +59,11 @@ public class SalvoApplication {
             //game1.setToday(new Date());
             Game game2 = gameRepository.save(new Game(Date.from(game1.getToday().toInstant().plusSeconds(3600))));
             Game game3 = gameRepository.save(new Game(Date.from(game2.getToday().toInstant().plusSeconds(3600))));
+            Game game4 = gameRepository.save(new Game(new Date()));
+            Game game5 = gameRepository.save(new Game(new Date()));
+            Game game6 = gameRepository.save(new Game(new Date()));
+            Game game7 = gameRepository.save(new Game(new Date()));
+            Game game8 = gameRepository.save(new Game(new Date()));
             //using methods in repository
             List<Game> allTheGames = gameRepository.findAll();
             System.out.println(allTheGames);
@@ -70,12 +75,23 @@ public class SalvoApplication {
             System.out.println("game player1" + gamePlayer1.getId());
             GamePlayer gamePlayer2 = gamePlayerRepository.save(new GamePlayer(new Date(),player2,game1));
             System.out.println("game player2" + gamePlayer2);
-            GamePlayer gamePlayer3 = gamePlayerRepository.save(new GamePlayer(new Date(),player3,game2));
+            GamePlayer gamePlayer3 = gamePlayerRepository.save(new GamePlayer(new Date(),player1,game2));
             System.out.println("game player3" + gamePlayer3);
-			GamePlayer gamePlayer4 = gamePlayerRepository.save(new GamePlayer(new Date(),player4,game2));
+			GamePlayer gamePlayer4 = gamePlayerRepository.save(new GamePlayer(new Date(),player2,game2));
 			System.out.println("game player4" + gamePlayer4);
-			GamePlayer gamePlayer5 = gamePlayerRepository.save(new GamePlayer(new Date(),player5,game3));
+			GamePlayer gamePlayer5 = gamePlayerRepository.save(new GamePlayer(new Date(),player2,game3));
 			System.out.println("game player4" + gamePlayer5);
+			GamePlayer gamePlayer6 = gamePlayerRepository.save(new GamePlayer(new Date(),player4,game3));
+			GamePlayer gamePlayer7 = gamePlayerRepository.save(new GamePlayer(new Date(),player2,game4));
+			GamePlayer gamePlayer8 = gamePlayerRepository.save(new GamePlayer(new Date(),player1,game4));
+			GamePlayer gamePlayer9 = gamePlayerRepository.save(new GamePlayer(new Date(),player4,game5));
+			GamePlayer gamePlayer10 = gamePlayerRepository.save(new GamePlayer(new Date(),player1,game5));
+			GamePlayer gamePlayer11 = gamePlayerRepository.save(new GamePlayer(new Date(),player3,game6));
+			GamePlayer gamePlayer12 = gamePlayerRepository.save(new GamePlayer(new Date(),player4,game7));
+			GamePlayer gamePlayer13 = gamePlayerRepository.save(new GamePlayer(new Date(),player3,game8));
+			GamePlayer gamePlayer14 = gamePlayerRepository.save(new GamePlayer(new Date(),player4,game8));
+
+
 
 
             // the parameter is defined as a list so to add an argument here you need to specify it as 'Arrays.asList'
@@ -141,6 +157,111 @@ public class SalvoApplication {
 			System.out.println(ship5);
 
 
+			Ship ship16 = shipRepository.save(new Ship("carrier", Arrays.asList("A1","A2","A3","A4"),gamePlayer6));
+			System.out.println("ship location is : " + ship1.getLocation());
+			Ship ship26 = shipRepository.save(new Ship("battleship",Arrays.asList("B4","B5","B6","B7"),gamePlayer6));
+			System.out.println(ship2);
+			Ship ship36 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer6));
+			System.out.println(ship3);
+			Ship ship46 = shipRepository.save(new Ship("destroyer", Arrays.asList("C1","D1","E1"),gamePlayer6));
+			System.out.println(ship4);
+			Ship ship56 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer6));
+			System.out.println(ship5);
+
+			Ship ship17 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer7));
+
+			Ship ship27 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer7));
+
+			Ship ship37 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer7));
+
+			Ship ship47 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer7));
+
+			Ship ship57 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer7));
+
+
+			Ship ship18 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer8));
+
+			Ship ship28 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer8));
+
+			Ship ship38 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer8));
+
+			Ship ship48 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer8));
+
+			Ship ship58 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer8));
+
+
+			Ship ship19 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer9));
+
+			Ship ship29 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer9));
+
+			Ship ship39 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer9));
+
+			Ship ship49 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer9));
+
+			Ship ship59 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer9));
+
+
+			Ship ship110 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3"),gamePlayer10));
+
+			Ship ship211 = shipRepository.save(new Ship("battleship",Arrays.asList("D5","D6","D7"),gamePlayer10));
+
+			Ship ship312 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer10));
+
+			Ship ship413 = shipRepository.save(new Ship("destroyer", Arrays.asList("D2","E2"),gamePlayer10));
+
+			Ship ship514 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer10));
+
+
+			Ship ship115 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer11));
+
+			Ship ship215 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer11));
+
+			Ship ship315 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer12));
+
+			Ship ship416 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer13));
+
+			Ship ship517 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer14));
+
+
+
+			Ship ship118 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer12));
+
+			Ship ship218 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer12));
+
+			Ship ship318 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer12));
+
+			Ship ship418 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer12));
+
+			Ship ship518 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer12));
+
+
+			Ship ship119 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer13));
+
+			Ship ship219 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer13));
+
+			Ship ship319 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer13));
+
+			Ship ship419 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer13));
+
+			Ship ship519 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer13));
+
+
+
+			Ship ship120 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer14));
+
+			Ship ship20 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer14));
+
+			Ship ship320 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer14));
+
+			Ship ship420 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer14));
+
+			Ship ship520 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer14));
+
+
+
+
+
+
 			//you were saving in SalvoRepository which is not correct should be salvorepository (which is the object)
 			Salvo salvo1 = salvoRepository.save(new Salvo(1,Arrays.asList("A1","A2"),gamePlayer1));
 			Salvo salvo2 = salvoRepository.save(new Salvo(1,Arrays.asList("B1","C3"),gamePlayer2));
@@ -151,6 +272,18 @@ public class SalvoApplication {
 			Salvo salvo7 = salvoRepository.save(new Salvo(3,Arrays.asList("G6","F4"),gamePlayer1));
 			Salvo salvo8 = salvoRepository.save(new Salvo(3,Arrays.asList("F6","H10"),gamePlayer2));
 			Salvo salvo9 = salvoRepository.save(new Salvo(3,Arrays.asList("I6","J9","F2"),gamePlayer3));
+
+
+			Score score1 = scoreRepository.save(new Score(1,new Date(),game1,player1));
+			Score score2 = scoreRepository.save(new Score(0.5,new Date(),game1,player2));
+			Score score3 = scoreRepository.save(new Score(0.5,new Date(),game2,player3));
+			Score score4 = scoreRepository.save(new Score(0,new Date(),game2,player4));
+			Score score5 = scoreRepository.save(new Score(1,new Date(),game3,player5));
+			Score score6 = scoreRepository.save(new Score(0,new Date(),game3,player6));
+			Score score7 = scoreRepository.save(new Score(0.5,new Date(),game4,player4));
+			Score score8 = scoreRepository.save(new Score(0.5,new Date(),game4,player1));
+
+
 
 
 		};

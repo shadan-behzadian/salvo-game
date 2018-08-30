@@ -47,6 +47,10 @@ fetch("http://localhost:8080/api/game_view/" + id, {
 
 
 
+
+
+
+
 var app1 = new Vue({
     el:'#grid',
     data: {
@@ -187,6 +191,10 @@ document.getElementById(playersId[j][turn][k]).textContent = turn;
 
 
 
+
+
+
+
     //this id is comeing from top of the page you are comparin if you are on the page with gp=1 or gp=2 ,...
     //    var url_string = window.location.href;
     //    var url = new URL(url_string);
@@ -198,10 +206,6 @@ document.getElementById(playersId[j][turn][k]).textContent = turn;
 //    }else{
 //    console.log("nothing")}
 //    console.log(players);
-
-
-
-
 
 
 
