@@ -10,7 +10,9 @@ public class Game {
     private Long Id;
     private Date date;
 
-
+//what you write in mappedBy = " " ha to equal to the instance you made in the othe class
+    //so for example the relationship between gameplayer and game is many to one and the column made in it is from calss
+    //Game and its an instance called game so we map over that.
     @OneToMany(mappedBy="game",fetch = FetchType.EAGER)
     Set<GamePlayer> gameplayers = new HashSet<>();
 
@@ -46,6 +48,7 @@ public class Game {
         return gameplayers;
     }
 
+    //this is the instance that you create in GamePlayer
     public void addGamePlayer(GamePlayer gameplayer){
 
         gameplayer.setOwnerGame(this);

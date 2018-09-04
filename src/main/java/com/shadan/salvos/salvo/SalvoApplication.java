@@ -1,10 +1,29 @@
 package com.shadan.salvos.salvo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.time.Instant;
 import java.util.*;
 
@@ -13,7 +32,7 @@ import java.util.*;
 that need instances of bean.
  */
 
-public class SalvoApplication {
+public class SalvoApplication   {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SalvoApplication.class, args);
@@ -23,14 +42,14 @@ public class SalvoApplication {
 	//annotation to mark a method that returns an instance of a Java bean
 	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository , GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository,ScoreRepository scoreRepository){
 		return (args)-> {
-            Player player1 = playerRepository.save(new Player("Jack","Bauer","j.bauer@ctu.gov"));
-            Player player2 = playerRepository.save(new Player("Chloe","O'Brian","shadan_b8@yahoo.com"));
-			Player player3 = playerRepository.save(new Player("Kim","Bauer","kim_bauer@gmail.com"));
-			Player player4 = playerRepository.save(new Player("Tony","almeida","t.almeida@ctu.gov"));
-			Player player5 = playerRepository.save(new Player("valeria","carbonada","valeri.carbonada@gmail.com"));
-			Player player6 = playerRepository.save(new Player("nico","capo","nico.capo@yahoo.com"));
+            Player player1 = playerRepository.save(new Player("Jack","Bauer","j.bauer@ctu.gov","24"));
+            Player player2 = playerRepository.save(new Player("Chloe","O'Brian","shadan_b8@yahoo.com","42"));
+			Player player3 = playerRepository.save(new Player("Kim","Bauer","kim_bauer@gmail.com","kb"));
+			Player player4 = playerRepository.save(new Player("Tony","almeida","t.almeida@ctu.gov","mole"));
+			Player player5 = playerRepository.save(new Player("valeria","carbonada","valeri.carbonada@gmail.com","val"));
+			Player player6 = playerRepository.save(new Player("nico","capo","nico.capo@yahoo.com","nic"));
 
-			List<Player> players =  playerRepository.findByUserName("shadan");
+			Player players =  playerRepository.findByUserName("shadan");
 			System.out.println(players);
 			Player p1 =  playerRepository.findByFirstName("nico");
 			System.out.println(p1);
@@ -96,12 +115,12 @@ public class SalvoApplication {
 
             // the parameter is defined as a list so to add an argument here you need to specify it as 'Arrays.asList'
 			Ship ship1 = shipRepository.save(new Ship("carrier", Arrays.asList("A1","A2","A3","A4","A5"),gamePlayer1));
-		System.out.println("ship location is : " + ship1.getLocation());
+			System.out.println("ship location is : " + ship1.getLocation());
 			Ship ship2 = shipRepository.save(new Ship("battleship",Arrays.asList("B4","B5","B6","B7"),gamePlayer1));
-		System.out.println(ship2);
+			System.out.println(ship2);
 			Ship ship3 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F3","F4"),gamePlayer1));
-		System.out.println(ship3);
-		Ship ship4 = shipRepository.save(new Ship("destroyer", Arrays.asList("C1","D1","E1"),gamePlayer1));
+			System.out.println(ship3);
+			Ship ship4 = shipRepository.save(new Ship("destroyer", Arrays.asList("C1","D1","E1"),gamePlayer1));
 			System.out.println(ship4);
 			Ship ship5 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J2","J3"),gamePlayer1));
 			System.out.println(ship5);
@@ -136,13 +155,9 @@ public class SalvoApplication {
 			System.out.println(ship5);
 
 			Ship ship14 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2"),gamePlayer4));
-
 			Ship ship24 = shipRepository.save(new Ship("battleship",Arrays.asList("B4","B5"),gamePlayer4));
-
 			Ship ship34 = shipRepository.save(new Ship("submarine", Arrays.asList("E9","F9","G9"),gamePlayer4));
-
 			Ship ship44 = shipRepository.save(new Ship("destroyer", Arrays.asList("J4","J5"),gamePlayer4));
-
 			Ship ship54 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("E2","E3"),gamePlayer4));
 
 			Ship ship15 = shipRepository.save(new Ship("carrier", Arrays.asList("A1","A2","A3","A4","A5"),gamePlayer5));
@@ -169,92 +184,60 @@ public class SalvoApplication {
 			System.out.println(ship5);
 
 			Ship ship17 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer7));
-
 			Ship ship27 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer7));
-
 			Ship ship37 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer7));
-
 			Ship ship47 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer7));
-
 			Ship ship57 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer7));
 
 
 			Ship ship18 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer8));
-
 			Ship ship28 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer8));
-
 			Ship ship38 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer8));
-
 			Ship ship48 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer8));
-
 			Ship ship58 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer8));
 
 
 			Ship ship19 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer9));
-
 			Ship ship29 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer9));
-
 			Ship ship39 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer9));
-
 			Ship ship49 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer9));
-
 			Ship ship59 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer9));
 
 
 			Ship ship110 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3"),gamePlayer10));
-
 			Ship ship211 = shipRepository.save(new Ship("battleship",Arrays.asList("D5","D6","D7"),gamePlayer10));
-
 			Ship ship312 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer10));
-
 			Ship ship413 = shipRepository.save(new Ship("destroyer", Arrays.asList("D2","E2"),gamePlayer10));
-
 			Ship ship514 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer10));
 
 
 			Ship ship115 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer11));
-
 			Ship ship215 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer11));
-
 			Ship ship315 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer12));
-
 			Ship ship416 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer13));
-
 			Ship ship517 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer14));
 
 
 
 			Ship ship118 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer12));
-
 			Ship ship218 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer12));
-
 			Ship ship318 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer12));
-
 			Ship ship418 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer12));
-
 			Ship ship518 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer12));
 
 
 			Ship ship119 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer13));
-
 			Ship ship219 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer13));
-
 			Ship ship319 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer13));
-
 			Ship ship419 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer13));
-
 			Ship ship519 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer13));
 
 
 
 			Ship ship120 = shipRepository.save(new Ship("carrier", Arrays.asList("G1","G2","G3","G4"),gamePlayer14));
-
-			Ship ship20 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer14));
-
+			Ship ship220 = shipRepository.save(new Ship("battleship",Arrays.asList("D4","D5","D6","D7"),gamePlayer14));
 			Ship ship320 = shipRepository.save(new Ship("submarine", Arrays.asList("F2","F4"),gamePlayer14));
-
 			Ship ship420 = shipRepository.save(new Ship("destroyer", Arrays.asList("C2","D2","E2"),gamePlayer14));
-
 			Ship ship520 = shipRepository.save(new Ship("patrolBoat", Arrays.asList("J1","J3"),gamePlayer14));
 
 
@@ -290,5 +273,94 @@ public class SalvoApplication {
 
 
 
+	}
+}
+
+
+//Now, to tell Spring to use this database (repository) for
+// authentication, we add the following WebSecurityConfiguration
+// class to our Application.java file.
+//This configuration class definition goes outside
+// and after the definition of our Application class. Java allows
+// a file to have more than one class definition, as long as only one
+// class is public, and the public class has the same name as the file.
+// The other classes are included in the package but not publicly
+// accessible. Spring can find them because of the @Configuration annotation.
+//The job of this new class is to take the name
+// someone has entered for log in, search the database with that name, and return a
+// UserDetails object with name, password, and role information
+// for that user, if any.
+
+
+
+@Configuration
+class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
+
+	@Autowired
+	PlayerRepository playerRepository;
+	@Override
+	public void init(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(inputName-> {
+			Player player = playerRepository.findByUserName(inputName);
+			if (player != null) {
+				return new User(player.getUserName(), player.getPassword(),
+						AuthorityUtils.createAuthorityList("USER"));
+
+
+			} else {
+				throw new UsernameNotFoundException("Unknown user: " + inputName);
+			}
+		});
+	}
+
+
+}
+
+@Configuration
+@EnableWebSecurity
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+				.authorizeRequests()
+				.antMatchers("/web/game.html").hasAuthority("USER")
+				.antMatchers("/web/game.js").hasAuthority("USER")
+				.antMatchers("/web/game.css").hasAuthority("USER")
+				.antMatchers("/web/games.html").permitAll()
+				.antMatchers("/web/games.js").permitAll()
+				.antMatchers("/web/games.css").permitAll()
+				.antMatchers("/api/games").permitAll()
+				.anyRequest().fullyAuthenticated();
+		http.formLogin()
+				.usernameParameter("email")
+				.passwordParameter("password")
+				.loginPage("/api/login");
+
+		http.logout().logoutUrl("/api/logout");
+
+		// turn off checking for CSRF tokens
+		http.csrf().disable();
+
+		// if user is not authenticated, just send an authentication failure response
+		http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+		// if login is successful, just clear the flags asking for authentication
+		http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
+
+		// if login fails, just send an authentication failure response
+		http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+		// if logout is successful, just send a success response
+		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+
+
+
+	}
+
+	private void clearAuthenticationAttributes(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+		}
 	}
 }
