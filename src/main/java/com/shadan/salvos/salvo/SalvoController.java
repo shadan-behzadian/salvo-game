@@ -1,6 +1,8 @@
 package com.shadan.salvos.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,8 +19,15 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/api")
 public class SalvoController {
 
+
     @Autowired
     private GameRepository gameRepository;
+
+    //you added this when you were adding player infor in games json
+    //so when someone tries to log in you want to show their dat ain the games json with all the games
+    //thats why you add the player repository an dthats whay you give authentication as parameter
+    @Autowired
+    PlayerRepository playerRepository;
 
     //second step in plan of attack to add more details in the object
     //we ar getting the info of the game first getting ID and date then through game we access de data of gameplayers
@@ -26,15 +35,35 @@ public class SalvoController {
     //to access the player info (remember it was a manytoone relationship, so each gameplayer can only have one player so
     //you dont need to stream anymore to get the data of the player.
     @RequestMapping("/games")
-    public Map<String, Object> toDTO() {
+    public Map<String, Object> toDTO(Authentication authentication) {
         Map<String, Object> dto = new LinkedHashMap<>();
+
         List<Game> games = gameRepository.findAll();
         dto.put("Games", games
                 .stream() //means loop over it, take them one by one.
                 .map(game-> gameDto(game)) //and fot each of them apply this methode, and the methode is defined out of this
                 .collect(toList()));
+        //this means if a user is authenticated then find the player with that username in database
+       if(authentication!= null) {
+           Player player = playerRepository.findByUserName(authentication.getName());
+           dto.put("player", playerDto(player));
+       }
+       else{
+           dto.put("player", "guest");
+       }
+
         return dto;
     }
+
+
+
+
+
+//    public  Map<String,Object> currentPlayerDto(Player playerExample) {
+//        Map<String, Object> dto = new LinkedHashMap<>();
+//            dto.put("id",get.Gameplayer().get)
+//    }
+
 
     public  Map<String,Object> gameDto(Game game){
         Map<String, Object> dto = new LinkedHashMap<>();
@@ -94,7 +123,7 @@ public class SalvoController {
 //first step of plan of attack to get only ID
 //    public List<Long> getListOfGamesId(){
 //
-//        List<Game> games = new ArrayList<>();
+//        List<Long> games = new ArrayList<>();
 //        games = gameRepository
 //                .findAll()
 //                .stream()

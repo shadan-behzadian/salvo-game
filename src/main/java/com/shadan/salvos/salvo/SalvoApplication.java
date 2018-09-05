@@ -292,7 +292,7 @@ public class SalvoApplication   {
 // for that user, if any.
 
 
-
+//to give a role to anyone who signs in
 @Configuration
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
@@ -300,14 +300,22 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 	PlayerRepository playerRepository;
 	@Override
 	public void init(AuthenticationManagerBuilder auth) throws Exception {
+		//As for the userDetailsService() method, it sets
+		// up an in-memory user store with a single user. That
+		// user is given a username
+		// of "user", a password of "password", and a role of "USER".
 		auth.userDetailsService(inputName-> {
 			Player player = playerRepository.findByUserName(inputName);
 			if (player != null) {
 				return new User(player.getUserName(), player.getPassword(),
 						AuthorityUtils.createAuthorityList("USER"));
 
-
-			} else {
+			}
+			//you could say here if(player == shadan_b8@yahoo.com){
+			//return new User(player.getUserName(), player.getPassword(),
+			//						AuthorityUtils.createAuthorityList("ADMIN"));
+		//}
+			else {
 				throw new UsernameNotFoundException("Unknown user: " + inputName);
 			}
 		});
@@ -316,12 +324,29 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
 }
 
+//to give a pathway to each of the roles
+//if it is a user do this, if it is an admin do this....
+//WebSecurityConfigurerAdapter has methods that does the security
+
+//The WebSecurityConfig class is annotated with @EnableWebSecurity
+// to enable Spring Security’s web security support and provide
+// the Spring MVC integration. It also extends WebSecurityConfigurerAdapter
+// and overrides a couple of its methods
+// to set some specifics of the web security configuration.
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
+	//The configure(HttpSecurity) method defines which URL paths
+	// should be secured and which should not. Specifically,
+	// the "/" and "/home" paths are configured to not require
+	// any authentication. All other paths must be authenticated.
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+				//add all the pathways, notice that css here should be deferent if
+				//you put all the css in one the if you give permission somewhere and
+				//not in another place it wont work
+				//first specify the ones that are more strict
 				.authorizeRequests()
 				.antMatchers("/web/game.html").hasAuthority("USER")
 				.antMatchers("/web/game.js").hasAuthority("USER")
@@ -332,6 +357,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/games").permitAll()
 				.anyRequest().fullyAuthenticated();
 		http.formLogin()
+				//you use these names in fetch
 				.usernameParameter("email")
 				.passwordParameter("password")
 				.loginPage("/api/login");
@@ -340,20 +366,14 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// turn off checking for CSRF tokens
 		http.csrf().disable();
-
 		// if user is not authenticated, just send an authentication failure response
 		http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
-
 		// if login is successful, just clear the flags asking for authentication
 		http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
-
 		// if login fails, just send an authentication failure response
 		http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
-
 		// if logout is successful, just send a success response
 		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
-
-
 
 	}
 

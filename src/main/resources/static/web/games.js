@@ -7,7 +7,7 @@ fetch("/api/games", {
 
     }).then(function (json) {
 
-
+console.log(json)
         app.gamesInfo = json.Games;
 
 
@@ -212,6 +212,93 @@ var table = document.getElementById("gameScores");
  }
 
 }
+
+
+//the same names you have in your function in salvo application : email and password
+var ourData = {
+       "email": "",
+       "password": ""
+   }
+
+
+
+
+document.getElementById("logIn").addEventListener("click", function(){
+
+var user = document.getElementById("loginUser").value;
+var pass = document.getElementById("loginPass").value;
+
+ourData["email"] = user;
+ ourData["password"]=pass;
+
+ if(user && pass){
+
+ fetch("/api/login", {
+       credentials: 'include',
+       headers: {
+           'Content-Type':'application/x-www-form-urlencoded'
+       },
+       method: 'POST',
+       //this is the function that you use from one below getbody()
+       body: getBody(ourData)
+   })
+       .then(function (data) {
+            console.log("In")
+
+       })
+       .catch(function (error) {
+           console.log('Request failure: ', error);
+       });
+
+       function getBody(json) {
+          var body = [];
+          for(var key in json){
+              var encKey = encodeURIComponent(key);
+              var encVal = encodeURIComponent(json[key]);
+              body.push(encKey + "=" + encVal);
+          }
+          return body.join("&");
+       }
+
+                        }}
+                    );
+
+
+
+document.getElementById("logOut").addEventListener("click",function(){
+fetch("/api/logout", {
+       credentials: 'include',
+       headers: {
+           'Content-Type':'application/x-www-form-urlencoded'
+       },
+       method: 'POST',
+       //this is the function that you use from one below getbody()
+       body: getBody(ourData)
+   })
+       .then(function (data) {
+            console.log("Out")
+
+       })
+       .catch(function (error) {
+           console.log('Request failure: ', error);
+       });
+
+       function getBody(json) {
+          var body = [];
+          for(var key in json){
+              var encKey = encodeURIComponent(key);
+              var encVal = encodeURIComponent(json[key]);
+              body.push(encKey + "=" + encVal);
+          }
+          return body.join("&");
+       }
+
+                        });
+
+
+
+
+
 
 
 
