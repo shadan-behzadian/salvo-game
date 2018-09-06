@@ -1,3 +1,5 @@
+ document.getElementById("logOut").style.display = "none"
+
 fetch("/api/games", {
         method: "GET"
     }).then(function (response) {
@@ -9,10 +11,22 @@ fetch("/api/games", {
 
 console.log(json)
         app.gamesInfo = json.Games;
+app.playerInfo =json.playerInfo;
+
+
+//i added these lines so that when somone is signed in and you refressh the page the sign in form disappears
+
+ document.getElementById("logInForm").style.display = "block"
+ document.getElementById("logIn").style.display = "block"
+ document.getElementById("logOut").style.display = "none"
+
+
 
 
 
 allPlayersScores();
+
+
 
 
     });
@@ -21,8 +35,8 @@ allPlayersScores();
 var app = new Vue({
     el:'#games',
     data: {
-            gamesInfo:[]
-
+            gamesInfo:[],
+playerInfo:{}
        }});
 
 
@@ -225,13 +239,17 @@ var ourData = {
 
 document.getElementById("logIn").addEventListener("click", function(){
 
+
+
 var user = document.getElementById("loginUser").value;
 var pass = document.getElementById("loginPass").value;
 
 ourData["email"] = user;
  ourData["password"]=pass;
 
- if(user && pass){
+
+
+//this fetch was sent to you by mantor to get data that you write in the
 
  fetch("/api/login", {
        credentials: 'include',
@@ -239,11 +257,39 @@ ourData["email"] = user;
            'Content-Type':'application/x-www-form-urlencoded'
        },
        method: 'POST',
+
        //this is the function that you use from one below getbody()
        body: getBody(ourData)
    })
+
        .then(function (data) {
+
+
             console.log("In")
+            document.getElementById("logIn").style.display = "none"
+            document.getElementById("logOut").style.display = "block"
+            document.getElementById("games").style.display = "block"
+            document.getElementById("logInForm").style.display = "none"
+
+//you got this from the top of the page becouse in the beginng you want to see al the data
+//but also when you log in you want front end to be updated
+fetch("/api/games", {
+        method: "GET"
+    }).then(function (response) {
+        if (response.ok) {
+            return response.json();
+        }
+
+    }).then(function (json) {
+
+console.log(json)
+        app.gamesInfo = json.Games;
+
+    });
+
+
+
+
 
        })
        .catch(function (error) {
@@ -260,8 +306,17 @@ ourData["email"] = user;
           return body.join("&");
        }
 
-                        }}
+
+
+
+                        }
                     );
+
+
+//Do note that the keys you use for the login JSON data (name and pwd) have to
+ //correspond with the arguments you gave to the http.formLogin().usernameParameter and
+  //http.formLogin().passwordParameter methods in a previous step.
+
 
 
 
@@ -271,12 +326,34 @@ fetch("/api/logout", {
        headers: {
            'Content-Type':'application/x-www-form-urlencoded'
        },
-       method: 'POST',
-       //this is the function that you use from one below getbody()
-       body: getBody(ourData)
+       method: 'POST'
+
    })
        .then(function (data) {
             console.log("Out")
+             document.getElementById("logOut").style.display = "none"
+            document.getElementById("logIn").style.display = "block"
+
+            document.getElementById("logInForm").style.display = "block"
+
+            fetch("/api/games", {
+                    method: "GET"
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.json();
+                    }
+
+                }).then(function (json) {
+
+            console.log(json)
+                    app.gamesInfo = json.Games;
+
+
+
+
+
+
+                });
 
        })
        .catch(function (error) {

@@ -278,7 +278,7 @@ public class SalvoApplication   {
 
 
 //Now, to tell Spring to use this database (repository) for
-// authentication, we add the following WebSecurityConfiguration
+// AUTHENTICATION, we add the following WebSecurityConfiguration
 // class to our Application.java file.
 //This configuration class definition goes outside
 // and after the definition of our Application class. Java allows
@@ -293,6 +293,9 @@ public class SalvoApplication   {
 
 
 //to give a role to anyone who signs in
+//Notice that nowhere does the code above check to see if
+// the password is correct. That's handled by Spring Security's User class internally.
+
 @Configuration
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
@@ -339,7 +342,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	//The configure(HttpSecurity) method defines which URL paths
 	// should be secured and which should not. Specifically,
-	// the "/" and "/home" paths are configured to not require
+	// the "/" and "/games.html /games.js /api/games /web/games.css" paths
+	// are configured to not require
 	// any authentication. All other paths must be authenticated.
 	protected void configure(HttpSecurity http) throws Exception {
 		http
@@ -356,6 +360,11 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/web/games.css").permitAll()
 				.antMatchers("/api/games").permitAll()
 				.anyRequest().fullyAuthenticated();
+		//.and()
+		//The and() starts a new section of rules. Every section has to
+		// succeed, so the above says that one of the matchers has to grant
+		// access AND form login has to pass,
+		// which will be true if the user is already logged in, or successfully logs in.
 		http.formLogin()
 				//you use these names in fetch
 				.usernameParameter("email")
@@ -365,6 +374,11 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.logout().logoutUrl("/api/logout");
 
 		// turn off checking for CSRF tokens
+		//It's also common with web services to turn off the requirement for CSRF tokens.
+		// These are additional keys that a server tells a browser to send with authenticated
+		// users to prevent a form of a attack called Cross-Site Forgery Request. CSRF tokens are
+		// disabled because supporting them requires a bit of work,
+		// and this kind of attack is more typical with regular web page browsing.
 		http.csrf().disable();
 		// if user is not authenticated, just send an authentication failure response
 		http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
@@ -376,7 +390,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
 
 	}
-
+// clearAuthenticationAttributes, is defined to remove the flag Spring sets when
+// an unauthenticated
+// user attempts to access some resource.
 	private void clearAuthenticationAttributes(HttpServletRequest request) {
 		HttpSession session = request.getSession(false);
 		if (session != null) {

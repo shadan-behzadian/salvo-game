@@ -23,7 +23,7 @@ public class SalvoController {
     @Autowired
     private GameRepository gameRepository;
 
-    //you added this when you were adding player infor in games json
+    //you added this when you were adding player info in games json in java 2
     //so when someone tries to log in you want to show their dat ain the games json with all the games
     //thats why you add the player repository an dthats whay you give authentication as parameter
     @Autowired
@@ -45,6 +45,9 @@ public class SalvoController {
                 .collect(toList()));
         //this means if a user is authenticated then find the player with that username in database
        if(authentication!= null) {
+           //If there is a user logged in, then authentication.getName() will return the
+           // name that was put into the
+           // UserDetails object by the WebSecurityConfiguration class.
            Player player = playerRepository.findByUserName(authentication.getName());
            dto.put("player", playerDto(player));
        }
