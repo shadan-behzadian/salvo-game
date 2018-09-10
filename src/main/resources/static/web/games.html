@@ -8,6 +8,8 @@
 </head>
 <body>
 
+<div id="youAreIn"></div>
+
 <div id="games">
 <ol v-for="game in gamesInfo">
 
@@ -35,12 +37,20 @@
 <div><label> User Name : <input type="text" name="username" id="loginUser"/> </label></div>
 <div><label> Password: <input type="password" name="password" id="loginPass"/> </label></div>
 </div>
-<div><input type="submit" value="Sign In" id="logIn"/></div>
 
+<div><input type="submit" value="Sign In" id="logIn"/></div>
 <div><input type="submit" value="Sign Out" id="logOut"/></div>
 
+<div id="signUpForm">
+    <div>sign up:</div>
+    <div><label> User Name : <input type="text" name="username" id="signUpUser"/> </label></div>
+    <div><label> FirstName : <input type="text" name="username" id="signUpFirstName"/> </label></div>
+    <div><label> LastName : <input type="text" name="username" id="signUpLastName"/> </label></div>
+    <div><label> Password: <input type="password" name="password" id="signUpPass"/> </label></div>
 
 
+<div><input type="submit" value="Sign Up" id="signUp"/></div>
+</div>
 </body>
 
 <script src="games.js"></script>

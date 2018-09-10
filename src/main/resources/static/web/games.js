@@ -1,4 +1,7 @@
  document.getElementById("logOut").style.display = "none"
+//you call this function when you log in as well.
+getGames();
+function getGames(){
 
 fetch("/api/games", {
         method: "GET"
@@ -11,17 +14,27 @@ fetch("/api/games", {
 
 console.log(json)
         app.gamesInfo = json.Games;
-app.playerInfo =json.playerInfo;
 
 
-//i added these lines so that when somone is signed in and you refressh the page the sign in form disappears
 
+
+//i added these lines so that when somone is signed in and you refressh the page the sign in
+ //form disappears
+
+if(json.player.hasOwnProperty("email")){
+ document.getElementById("logInForm").style.display = "none"
+ document.getElementById("logIn").style.display = "none"
+ document.getElementById("logOut").style.display = "block"
+ document.getElementById("youAreIn").textContent = json.player.email
+ document.getElementById("signUpForm").style.display ="none";
+}else{
  document.getElementById("logInForm").style.display = "block"
  document.getElementById("logIn").style.display = "block"
  document.getElementById("logOut").style.display = "none"
+  document.getElementById("signUpForm").style.display ="block"
 
 
-
+}
 
 
 allPlayersScores();
@@ -29,14 +42,18 @@ allPlayersScores();
 
 
 
-    });
+    })
+     .catch(function (error) {
+               console.log('Request failure: ', error);
+           });
 
 
+}
 var app = new Vue({
     el:'#games',
     data: {
             gamesInfo:[],
-playerInfo:{}
+
        }});
 
 
@@ -202,6 +219,9 @@ function createTd(text, targetRowToAppendTD) {
 function createTableBody(scoreObject){
 
 var table = document.getElementById("gameScores");
+//you need to empthy the table becouse you call this table two times so in two different places
+//on top of the page inside the fetch and in the log in fetch you call that function again
+table.innerHTML = "";
 
 //*****to get legnth of an object::::::
 //console.log(Object.keys(scoreObject).length);
@@ -227,15 +247,43 @@ var table = document.getElementById("gameScores");
 
 }
 
+function logIn(){
+ fetch("/api/login", {
+       credentials: 'include',
+       headers: {
+           'Content-Type':'application/x-www-form-urlencoded'
+       },
+       method: 'POST',
+
+       //this is the function that you use from one below getbody()
+       body: getBody(ourData)
+   })
+
+       .then(function (data) {
+
+
+
+       }).then(function (json) {
+
+getGames();
+
+
+             })
+       .catch(function (error) {
+           console.log('Request failure: ', error);
+
+       });
+}
+
+
 
 //the same names you have in your function in salvo application : email and password
+
+
 var ourData = {
        "email": "",
        "password": ""
    }
-
-
-
 
 document.getElementById("logIn").addEventListener("click", function(){
 
@@ -251,52 +299,15 @@ ourData["email"] = user;
 
 //this fetch was sent to you by mantor to get data that you write in the
 
- fetch("/api/login", {
-       credentials: 'include',
-       headers: {
-           'Content-Type':'application/x-www-form-urlencoded'
-       },
-       method: 'POST',
-
-       //this is the function that you use from one below getbody()
-       body: getBody(ourData)
-   })
-
-       .then(function (data) {
-
-
-            console.log("In")
-            document.getElementById("logIn").style.display = "none"
-            document.getElementById("logOut").style.display = "block"
-            document.getElementById("games").style.display = "block"
-            document.getElementById("logInForm").style.display = "none"
-
-//you got this from the top of the page becouse in the beginng you want to see al the data
-//but also when you log in you want front end to be updated
-fetch("/api/games", {
-        method: "GET"
-    }).then(function (response) {
-        if (response.ok) {
-            return response.json();
-        }
-
-    }).then(function (json) {
-
-console.log(json)
-        app.gamesInfo = json.Games;
-
-    });
+logIn();
 
 
 
+                        }
+                    );
 
-
-       })
-       .catch(function (error) {
-           console.log('Request failure: ', error);
-       });
-
-       function getBody(json) {
+//this function was givern by mentor and it is used in log in function
+ function getBody(json) {
           var body = [];
           for(var key in json){
               var encKey = encodeURIComponent(key);
@@ -305,13 +316,6 @@ console.log(json)
           }
           return body.join("&");
        }
-
-
-
-
-                        }
-                    );
-
 
 //Do note that the keys you use for the login JSON data (name and pwd) have to
  //correspond with the arguments you gave to the http.formLogin().usernameParameter and
@@ -335,45 +339,73 @@ fetch("/api/logout", {
             document.getElementById("logIn").style.display = "block"
 
             document.getElementById("logInForm").style.display = "block"
+  document.getElementById("youAreIn").style.display = "none"
 
-            fetch("/api/games", {
-                    method: "GET"
-                }).then(function (response) {
-                    if (response.ok) {
-                        return response.json();
-                    }
+           getGames()
 
-                }).then(function (json) {
-
-            console.log(json)
-                    app.gamesInfo = json.Games;
-
-
-
-
-
-
-                });
-
-       })
-       .catch(function (error) {
-           console.log('Request failure: ', error);
-       });
-
-       function getBody(json) {
-          var body = [];
-          for(var key in json){
-              var encKey = encodeURIComponent(key);
-              var encVal = encodeURIComponent(json[key]);
-              body.push(encKey + "=" + encVal);
-          }
-          return body.join("&");
-       }
+//       function getBody(json) {
+//          var body = [];
+//          for(var key in json){
+//              var encKey = encodeURIComponent(key);
+//              var encVal = encodeURIComponent(json[key]);
+//              body.push(encKey + "=" + encVal);
+//          }
+//          return body.join("&");
+//       }
 
                         });
 
+})
 
 
+//sign up button
+document.getElementById("signUp").addEventListener("click", function(){
+
+var player = {
+       userName: document.getElementById("signUpUser").value,
+       firstName: document.getElementById("signUpFirstName").value,
+       lastName: document.getElementById("signUpLastName").value,
+       password: document.getElementById("signUpPass").value
+   }
+
+
+fetch('/api/players' , {
+       credentials: 'include',
+       method: 'POST',
+       headers: {
+
+           'Content-Type': 'application/json'
+       },
+       body: JSON.stringify(player)
+   }).then(function(response) {
+       return response.json();
+
+
+   }).then(function(json) {
+       console.log('parsed json', json)
+
+    var userSignUp = document.getElementById("signUpUser").value;
+    var passSignUp = document.getElementById("signUpPass").value;
+
+    ourData["email"] = userSignUp;
+     ourData["password"]= passSignUp;
+
+
+    logIn();
+
+
+document.getElementById("signUpForm").style.display ="none"
+
+
+
+   }).catch(function(ex) {
+       console.log('parsing failed', ex)
+   });
+
+
+}
+
+);
 
 
 

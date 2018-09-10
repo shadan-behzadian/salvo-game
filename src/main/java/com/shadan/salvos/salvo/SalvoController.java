@@ -1,11 +1,11 @@
 package com.shadan.salvos.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,6 +28,31 @@ public class SalvoController {
     //thats why you add the player repository an dthats whay you give authentication as parameter
     @Autowired
     PlayerRepository playerRepository;
+
+    //to post from front end to back end (signup form)
+    @RequestMapping(path ="/players", method = RequestMethod.POST)
+    //to pass the whole object (@Requestbody) to pass one by on eparameters (@requestparameter)
+    public ResponseEntity<Map<String, Object>> createUser(@RequestBody Player player) {
+        //The @RequestBody annotation tells Spring to take the data in the body of
+        // the request, parse it as a JSON
+        // object, then map the JSON object to an instance of the class Player.
+        if (player.getUserName().isEmpty()) {
+            return new ResponseEntity<>(makeMap("error","No UserName given"), HttpStatus.FORBIDDEN);
+        }
+        Player newPlayer = playerRepository.findByUserName(player.getUserName());
+        if (newPlayer != null) {
+            return new ResponseEntity<>(makeMap("error","Name already used"), HttpStatus.CONFLICT);
+        }
+        Player newPlayerAdded = playerRepository.save(new Player(player.getFirstName(),player.getLastName(),player.getUserName(),player.getPassword()));
+        return new ResponseEntity<>(makeMap("Player was added with id number",newPlayerAdded.getId()) , HttpStatus.CREATED);
+    }
+//to make function in the function above
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
+    }
+
 
     //second step in plan of attack to add more details in the object
     //we ar getting the info of the game first getting ID and date then through game we access de data of gameplayers
@@ -222,6 +247,7 @@ public class SalvoController {
 
         return dto;
     }
+
 
 
 }
