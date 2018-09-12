@@ -83,6 +83,7 @@ public class SalvoApplication   {
             Game game6 = gameRepository.save(new Game(new Date()));
             Game game7 = gameRepository.save(new Game(new Date()));
             Game game8 = gameRepository.save(new Game(new Date()));
+            Game game9 = gameRepository.save(new Game(new Date()));
             //using methods in repository
             List<Game> allTheGames = gameRepository.findAll();
             System.out.println(allTheGames);
@@ -109,6 +110,7 @@ public class SalvoApplication   {
 			GamePlayer gamePlayer12 = gamePlayerRepository.save(new GamePlayer(new Date(),player4,game7));
 			GamePlayer gamePlayer13 = gamePlayerRepository.save(new GamePlayer(new Date(),player3,game8));
 			GamePlayer gamePlayer14 = gamePlayerRepository.save(new GamePlayer(new Date(),player4,game8));
+			GamePlayer gamePlayer15 = gamePlayerRepository.save(new GamePlayer(new Date(),player2,game9));
 
 
 

@@ -32,9 +32,9 @@ fetch("/api/game_view/" + id, {
    positionShips();
 
    app1.you = json.gamePlayers[0].player.email;
-
+if(  data.length == 2){
     app1.opponent = json.gamePlayers[1].player.email;
-
+}
     var salvoes = json.salvoes;
 
     for(let salvo of salvoes){
@@ -43,7 +43,11 @@ fetch("/api/game_view/" + id, {
 
     positionSalvos(salvoes);
 
-    });
+    })
+    .catch(function(ex) {
+           console.log('parsing failed', ex)
+           console.log("dont cheat")
+       });
 
 
 

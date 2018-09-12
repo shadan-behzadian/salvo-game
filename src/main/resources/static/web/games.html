@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Salvo!</title>
@@ -10,12 +10,26 @@
 
 <div id="youAreIn"></div>
 
+<div id="createGame"><a><button>Create Game</button></a></div>
+
 <div id="games">
 <ol v-for="game in gamesInfo">
 
     <li>Date of game creation: {{new Date(game.date)}}</li>
-    <li>Player Username : {{game.gamePlayers[0].player.email}}</li>
+    <li v-if="(game.gamePlayers.length == 1 && game.gamePlayers[0].player.id == currentPlayerInfo.id )">Player Username : {{game.gamePlayers[0].id}} {{game.gamePlayers[0].player.email}} <a v-bind:href="'/web/game.html?gp=' + game.gamePlayers[0].id"><button> Re-enter </button> </a></li>
+    <li v-else-if="(game.gamePlayers.length ==2 && game.gamePlayers[0].player.id == currentPlayerInfo.id)">Player Username : {{game.gamePlayers[0].id}} {{game.gamePlayers[0].player.email}} <a v-bind:href="'/web/game.html?gp=' + game.gamePlayers[0].id"> <button> Re-enter </button> </a></li>
+    <li v-else-if="(game.gamePlayers.length ==2 && game.gamePlayers[1].player.id == currentPlayerInfo.id)">Player Username : {{game.gamePlayers[1].id}} {{game.gamePlayers[1].player.email}} <a v-bind:href="'/web/game.html?gp=' + game.gamePlayers[1].id"> <button> Re-enter </button> </a></li>
+    <li v-else><button>Join</button></li>
 
+    <!--<li v-else>Player Username : {{game.gamePlayers[1].player.email}} VS {{game.gamePlayers[0].player.email}}</li>-->
+    <!--<div v-for="playerr in game.gamePlayers">-->
+        <!--<div v-if="playerr.id == currentPlayerInfo.id">-->
+         <!--<a v-bind:href="'/web/game.html?gp=' + playerr.id "> Re-enter </a>-->
+        <!--</div>-->
+        <!--<div v-else>-->
+            <!--<button> Join </button>-->
+        <!--</div>-->
+    <!--</div>-->
 
 </ol>
 
@@ -34,7 +48,7 @@
 
 
 <div id="logInForm">
-<div><label> User Name : <input type="text" name="username" id="loginUser"/> </label></div>
+<div><label> User Name : <input type="email" name="username" id="loginUser"/> </label></div>
 <div><label> Password: <input type="password" name="password" id="loginPass"/> </label></div>
 </div>
 
@@ -43,7 +57,7 @@
 
 <div id="signUpForm">
     <div>sign up:</div>
-    <div><label> User Name : <input type="text" name="username" id="signUpUser"/> </label></div>
+    <div><label> User Name : <input type="email" name="username" id="signUpUser"/> </label></div>
     <div><label> FirstName : <input type="text" name="username" id="signUpFirstName"/> </label></div>
     <div><label> LastName : <input type="text" name="username" id="signUpLastName"/> </label></div>
     <div><label> Password: <input type="password" name="password" id="signUpPass"/> </label></div>

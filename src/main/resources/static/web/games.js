@@ -14,6 +14,10 @@ fetch("/api/games", {
 
 console.log(json)
         app.gamesInfo = json.Games;
+        console.log(app.gamesInfo);
+        app.currentPlayerInfo = json.player
+console.log(app.currentPlayerInfo);
+//console.log(json.Games[0].date);
 
 
 
@@ -53,7 +57,7 @@ var app = new Vue({
     el:'#games',
     data: {
             gamesInfo:[],
-
+         currentPlayerInfo:[]
        }});
 
 
@@ -404,8 +408,37 @@ document.getElementById("signUpForm").style.display ="none"
 
 
 }
-
 );
+
+
+
+//to creat a game
+document.getElementById("createGame").addEventListener("click", function(){
+
+
+fetch('/api/games' , {
+       credentials: 'include',
+       method: 'POST',
+       headers: {
+
+           'Content-Type': 'application/json'
+       },
+       body: JSON.stringify(player)
+   }).then(function(response) {
+       return response.json();
+
+
+   }).then(function(json) {
+       console.log('parsed json', json)
+
+
+   }).catch(function(ex) {
+       console.log('parsing failed', ex)
+   });
+
+
+})
+
 
 
 

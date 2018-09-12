@@ -83,9 +83,20 @@ public class SalvoController {
         return dto;
     }
 
+    //to create a new game
+
+//    @RequestMapping(value = "/games", method = RequestMethod.POST)
+//    public Map<String, Object> CreateNewGame(Authentication authentication) {
+//        Map<String, Object> dto = new LinkedHashMap<>();
+//        Player player = playerRepository.findByUserName(authentication.getName());
+//
+//        return dto;
+//
+//    }
 
 
 
+    
 
 //    public  Map<String,Object> currentPlayerDto(Player playerExample) {
 //        Map<String, Object> dto = new LinkedHashMap<>();
@@ -166,10 +177,29 @@ public class SalvoController {
     private GamePlayerRepository gamePlayerRepository;
 
     @RequestMapping("/game_view/{gamePlayerId}")
-    public Map<String, Object> toGameViewDTO(@PathVariable Long gamePlayerId) {
+    public ResponseEntity<Map<String, Object>> toGameViewDTO(@PathVariable Long gamePlayerId, Authentication authentication) {
         Map<String, Object> dto = new LinkedHashMap<>();
         //toget game player to acces game info and ship info and ...
         GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+        if(authentication == null){
+            return new ResponseEntity<>(makeMap("Error", "You need to log in"),HttpStatus.UNAUTHORIZED);
+        }else {
+            Player player = playerRepository.findByUserName(authentication.getName());
+
+            if ( player.getId() ==gamePlayer.getPlayer().getId()){
+                return new ResponseEntity<>(currentPlayer(gamePlayer), HttpStatus.OK);
+            }
+        else{
+                return new ResponseEntity<>(makeMap("Do not cheat!!!", "play your own game"), HttpStatus.UNAUTHORIZED);
+            }
+
+        }
+
+    }
+
+    public Map<String, Object> currentPlayer(GamePlayer gamePlayer){
+        Map<String, Object> dto = new LinkedHashMap<>();
+
         dto.put("Id", gamePlayer.getGame().getId());
         dto.put("created", gamePlayer.getGame().getToday());
         dto.put("gamePlayers", gamePlayer.getGame().getGameplayers()
@@ -194,8 +224,10 @@ public class SalvoController {
         );
 
         return dto;
-
     }
+
+
+
 
     public Map<String, Object> getGameplayer(GamePlayer gameplayer) {
         Map<String, Object> dto = new LinkedHashMap<>();
