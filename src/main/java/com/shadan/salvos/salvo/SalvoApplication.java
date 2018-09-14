@@ -17,6 +17,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
@@ -276,6 +279,13 @@ public class SalvoApplication   {
 
 
 	}
+
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
+
 }
 
 
@@ -311,6 +321,7 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 		// of "user", a password of "password", and a role of "USER".
 		auth.userDetailsService(inputName-> {
 			Player player = playerRepository.findByUserName(inputName);
+			System.out.println(player.getPassword());
 			if (player != null) {
 				return new User(player.getUserName(), player.getPassword(),
 						AuthorityUtils.createAuthorityList("USER"));
@@ -402,4 +413,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
 		}
 	}
+
+
+
+
 }

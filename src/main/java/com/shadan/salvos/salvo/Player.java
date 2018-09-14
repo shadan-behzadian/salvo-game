@@ -1,5 +1,6 @@
 package com.shadan.salvos.salvo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Email;
 
 
@@ -47,6 +48,8 @@ public class Player {
         this.password = password;
 
     }
+
+    @JsonIgnore
     public Set<GamePlayer> getGameplayers(){
         return gameplayers;
     }
@@ -98,7 +101,7 @@ public class Player {
         return firstName + " " + lastName + " " + userName;
     }
 
-
+@JsonIgnore
     public Set<Score> getScores(){
 
         return scores;

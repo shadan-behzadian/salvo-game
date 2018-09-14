@@ -22,6 +22,7 @@ console.log(app.currentPlayerInfo);
 
 
 
+
 //i added these lines so that when somone is signed in and you refressh the page the sign in
  //form disappears
 
@@ -58,6 +59,13 @@ var app = new Vue({
     data: {
             gamesInfo:[],
          currentPlayerInfo:[]
+       },
+       methods:{
+
+       joinGame : function(id){
+            joinGames(id);
+       }
+
        }});
 
 
@@ -345,6 +353,7 @@ fetch("/api/logout", {
             document.getElementById("logInForm").style.display = "block"
   document.getElementById("youAreIn").style.display = "none"
 
+
            getGames()
 
 //       function getBody(json) {
@@ -413,9 +422,13 @@ document.getElementById("signUpForm").style.display ="none"
 
 
 //to creat a game
-document.getElementById("createGame").addEventListener("click", function(){
+document.getElementById("createGame").addEventListener("click", createGame);
 
 
+
+
+
+function createGame(){
 fetch('/api/games' , {
        credentials: 'include',
        method: 'POST',
@@ -423,13 +436,45 @@ fetch('/api/games' , {
 
            'Content-Type': 'application/json'
        },
-       body: JSON.stringify(player)
+
    }).then(function(response) {
        return response.json();
 
 
    }).then(function(json) {
        console.log('parsed json', json)
+//you put json from parsed json consol log becouse this is the responce that creates controller and gives bad
+//json as {gpId : whateverId}
+//this line you learnt it in the book to redirect pages
+location.assign("http://localhost:8080/web/game.html?gp="+ json.gpId );
+
+   }).catch(function(ex) {
+       console.log('parsing failed', ex)
+   });
+
+
+}
+
+
+
+//this is the function to join the game (you use a v-on click to call it in the vue)
+function joinGames(gameId){
+
+fetch('/api/game/'+ gameId +'/players' , {
+       credentials: 'include',
+       method: 'POST',
+       headers: {
+
+           'Content-Type': 'application/json'
+       },
+
+   }).then(function(response) {
+       return response.json();
+
+
+   }).then(function(json) {
+       console.log('parsed json', json)
+location.assign("http://localhost:8080/web/game.html?gp="+ json.newGamePlayerCreatedID)
 
 
    }).catch(function(ex) {
@@ -437,17 +482,5 @@ fetch('/api/games' , {
    });
 
 
-})
-
-
-
-
-
-
-
-
-
-
-
-
+}
 

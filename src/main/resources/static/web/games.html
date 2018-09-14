@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Salvo!</title>
@@ -19,7 +19,9 @@
     <li v-if="(game.gamePlayers.length == 1 && game.gamePlayers[0].player.id == currentPlayerInfo.id )">Player Username : {{game.gamePlayers[0].id}} {{game.gamePlayers[0].player.email}} <a v-bind:href="'/web/game.html?gp=' + game.gamePlayers[0].id"><button> Re-enter </button> </a></li>
     <li v-else-if="(game.gamePlayers.length ==2 && game.gamePlayers[0].player.id == currentPlayerInfo.id)">Player Username : {{game.gamePlayers[0].id}} {{game.gamePlayers[0].player.email}} <a v-bind:href="'/web/game.html?gp=' + game.gamePlayers[0].id"> <button> Re-enter </button> </a></li>
     <li v-else-if="(game.gamePlayers.length ==2 && game.gamePlayers[1].player.id == currentPlayerInfo.id)">Player Username : {{game.gamePlayers[1].id}} {{game.gamePlayers[1].player.email}} <a v-bind:href="'/web/game.html?gp=' + game.gamePlayers[1].id"> <button> Re-enter </button> </a></li>
-    <li v-else><button>Join</button></li>
+    <li v-else>
+        <div  v-if="(game.gamePlayers.length == 1)"><button  v-on:click ="joinGame(game.id)">Join</button></div>
+    </li>
 
     <!--<li v-else>Player Username : {{game.gamePlayers[1].player.email}} VS {{game.gamePlayers[0].player.email}}</li>-->
     <!--<div v-for="playerr in game.gamePlayers">-->
