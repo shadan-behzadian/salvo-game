@@ -484,3 +484,5 @@ location.assign("http://localhost:8080/web/game.html?gp="+ json.newGamePlayerCre
 
 }
 
+
+

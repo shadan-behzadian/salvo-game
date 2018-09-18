@@ -28,7 +28,10 @@ public class SalvoController {
     //so when someone tries to log in you want to show their dat ain the games json with all the games
     //thats why you add the player repository an dthats whay you give authentication as parameter
     @Autowired
-    PlayerRepository playerRepository;
+    private PlayerRepository playerRepository;
+
+    @Autowired
+    private ShipRepository shipRepository;
 
 
     //this method is a get methode you added to see the players when you sign up people
@@ -62,7 +65,7 @@ public class SalvoController {
             return new ResponseEntity<>(makeMap("error","Name already used"), HttpStatus.CONFLICT);
         }
         Player newPlayerAdded = playerRepository.save(new Player(player.getFirstName(),player.getLastName(),player.getUserName(),player.getPassword()));
-       
+
         return new ResponseEntity<>(makeMap("Player was added with id number",newPlayerAdded.getId()) , HttpStatus.CREATED);
     }
 //to make function in the function above
@@ -72,6 +75,39 @@ public class SalvoController {
         return map;
     }
 
+
+    @RequestMapping(path = "/games/players/{gamePlayerId}/ships")
+    public ResponseEntity<Map<String,Object>> placeShips(Authentication authentication,@PathVariable Long gamePlayerId,@RequestBody List<Ship> ships){
+
+    GamePlayer gamePlayerWhoPlays = gamePlayerRepository.findOne(gamePlayerId);
+
+      if(authentication == null) {
+          return new ResponseEntity<>(makeMap("error", "please logIn or SignUp"), HttpStatus.UNAUTHORIZED);
+      }
+          if(gamePlayerId == null){
+              return new ResponseEntity<>(makeMap("error","this player does not exist"),HttpStatus.UNAUTHORIZED);
+
+      }
+      //the second time
+      if(gamePlayerWhoPlays.getShip().size() > 0){
+          return new ResponseEntity<>(makeMap("error","you can not place more ships"),HttpStatus.FORBIDDEN);
+      }
+      //the first time enters here becouse the gamelayer still does not have any ship assigned to it
+        if(ships.size() != 5){
+            return new ResponseEntity<>(makeMap("error","you need to place 5 ships"),HttpStatus.UNAUTHORIZED);
+        }
+        else{
+            for (Ship eachShip : ships ) {
+              gamePlayerWhoPlays.addShip(eachShip);
+              shipRepository.save(eachShip);
+            }
+
+
+        }
+
+        return new ResponseEntity<>(makeMap("Done","ships are placed"),HttpStatus.CREATED);
+
+    }
 
 
 

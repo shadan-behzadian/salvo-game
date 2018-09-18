@@ -207,10 +207,46 @@ document.getElementById(playersId[j][turn][k]).textContent = turn;
 
 
 
+document.getElementById("addShips").addEventListener("click",placeShips);
+
+//hard coded this to test if fetch is working
+var shipsPlaces =[
+{"type":"submarine",
+"location":["A1","A2","A3"]},
+{"type":"carrier",
+"location":["B1","B2","B3"]},
+{"type":"battleship",
+"location":["G4","G5","G6"]},
+{"type":"destroyer",
+"location":["C1","C2","C3"]},
+{"type":"patrolBoat",
+"location":["E1","E2","E3"]}
+
+];
 
 
 
 
+function placeShips(){
 
+//you are puting the id of the erson on the page instead of this variable (gameplayerId)) and you get this from the
+//top of the page.
+fetch('/api/games/players/'+id+'/ships' , {
+       credentials: 'include',
+       method: 'POST',
+       headers: {
 
+           'Content-Type': 'application/json'
+       },
+       body: JSON.stringify(shipsPlaces)
+   }).then(function(response) {
+       return response.json();
+   }).then(function(json) {
+    positionShips();
+    location.reload();
+       console.log('parsed json', json)
+   }).catch(function(ex) {
+       console.log('parsing failed', ex)
+   });
 
+   }
