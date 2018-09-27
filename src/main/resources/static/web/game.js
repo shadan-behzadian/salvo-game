@@ -207,6 +207,16 @@ document.getElementById(playersId[j][turn][k]).textContent = turn;
 
 
 
+
+
+
+
+
+
+
+
+
+
 document.getElementById("addShips").addEventListener("click",placeShips);
 
 //hard coded this to test if fetch is working
@@ -229,7 +239,7 @@ var shipsPlaces =[
 
 function placeShips(){
 
-//you are puting the id of the erson on the page instead of this variable (gameplayerId)) and you get this from the
+//you are puting the id of the person on the page instead of this variable (gameplayerId)) and you get this from the
 //top of the page.
 fetch('/api/games/players/'+id+'/ships' , {
        credentials: 'include',
