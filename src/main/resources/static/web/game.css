@@ -8,26 +8,69 @@ th, td{
 
 .battleship{
 background-color: red;
+ height: 20px;
+    width: 20px;
+    cursor: pointer;
 }
 
 .carrier{
 background-color: green;
+ height: 20px;
+    width: 20px;
+    cursor: pointer;
 }
 
 .patrolBoat{
 background-color: yellow;
+ height: 20px;
+    width: 20px;
+    cursor: pointer;
 }
 
 .submarine{
-background-color:pink
+background-color:orange;
+       height: 20px;
+    width: 20px;
+    cursor: pointer;
 }
 
 .destroyer{
 background-color: blue;
+ height: 20px;
+    width: 20px;
+    cursor: pointer;
 }
 
 .salvoShots{
 background-color:black;
+ height: 20px;
+    width: 20px;
+    cursor: pointer;
 color:white;
+}
+
+.empty{
+
+
+    background-color: white;
+}
+
+.hold{
+    border: solid gray 4px;
+}
+
+.allowed{
+    background-color: lightgray;
+    border-style: dashed;
+}
+
+.invisible{
+    display: none;
+}
+
+
+.notAllowed{
+    background-color: pink;
+
 }
 

@@ -33,6 +33,9 @@ public class SalvoController {
     @Autowired
     private ShipRepository shipRepository;
 
+    @Autowired
+    private SalvoRepository salvoRepository;
+
 
     //this method is a get methode you added to see the players when you sign up people
     //becouse you only had a post method for api players and you did npt have an api for post players
@@ -76,8 +79,8 @@ public class SalvoController {
     }
 
 
-    @RequestMapping(path = "/games/players/{gamePlayerId}/ships")
-    public ResponseEntity<Map<String,Object>> placeShips(Authentication authentication,@PathVariable Long gamePlayerId,@RequestBody List<Ship> ships){
+    @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
+    public ResponseEntity<Map<String,Object>> placeShips(Authentication authentication,@PathVariable Long gamePlayerId,@RequestBody Set<Ship> ships){
 
     GamePlayer gamePlayerWhoPlays = gamePlayerRepository.findOne(gamePlayerId);
 
@@ -88,7 +91,7 @@ public class SalvoController {
               return new ResponseEntity<>(makeMap("error","this player does not exist"),HttpStatus.UNAUTHORIZED);
 
       }
-      //the second time
+      //the second time enters here
       if(gamePlayerWhoPlays.getShip().size() > 0){
           return new ResponseEntity<>(makeMap("error","you can not place more ships"),HttpStatus.FORBIDDEN);
       }
@@ -100,6 +103,7 @@ public class SalvoController {
             for (Ship eachShip : ships ) {
               gamePlayerWhoPlays.addShip(eachShip);
               shipRepository.save(eachShip);
+
             }
 
 
@@ -108,6 +112,37 @@ public class SalvoController {
         return new ResponseEntity<>(makeMap("Done","ships are placed"),HttpStatus.CREATED);
 
     }
+
+
+
+   @RequestMapping(path = "/games/players/{gamePlayerId}/salvos",method = RequestMethod.POST)
+public ResponseEntity<Map<String,Object>> placesalvo(Authentication authentication,@PathVariable Long gamePlayerId, @RequestBody Set<Salvo> salvos){
+
+       GamePlayer gamePlayerWhoPlayes = gamePlayerRepository.getOne(gamePlayerId);
+        if(authentication == null){
+            return new ResponseEntity<>(makeMap("error","please signUp or Login to continue"),HttpStatus.UNAUTHORIZED);
+        }
+        if(gamePlayerId == null){
+            return new ResponseEntity<>(makeMap("error","this player does not exist"),HttpStatus.UNAUTHORIZED);
+        }
+        //the current user is not the game player the ID references??!!!! is the code corrrect??
+        if(authentication.getName() != gamePlayerWhoPlayes.getPlayer().getUserName()){
+            return new ResponseEntity<>(makeMap("error","you are not supposed to be in this game!!"),HttpStatus.UNAUTHORIZED);
+        }
+        
+
+
+        else{
+            for(Salvo eachSalvo : salvos){
+                gamePlayerWhoPlayes.addSalvo(eachSalvo);
+                salvoRepository.save(eachSalvo);
+
+            }
+        }
+        return new ResponseEntity<>(makeMap("OK","Salvo is placed"),HttpStatus.CREATED);
+   }
+
+
 
 
 

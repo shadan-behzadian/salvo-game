@@ -109,6 +109,7 @@ var app2 = new Vue({
                                  //you already have capital letter ids
                                  td.setAttribute("id", gridRows[i].toLowerCase() + j);
                                                          tr.appendChild(td);
+                                                         td.setAttribute("data-salvo","places");
                                  }
 
                 }
@@ -207,32 +208,523 @@ document.getElementById(playersId[j][turn][k]).textContent = turn;
 
 
 
+// beginingjavascript code for implementing teh darg and drop ship//
+
+
+
+
+
+var tdInUse;
+//the id of currently selected ship in drag start
+var selectedShips;
+var shipss = [];
+var currentTdJustEmptied;
+
+var carrier = document.getElementById("carrier");
+shipss.push(carrier);
+var battleship = document.getElementById("battleship");
+shipss.push(battleship);
+var patrolBoat = document.getElementById("patrolBoat");
+shipss.push(patrolBoat);
+var submarine = document.getElementById("submarine");
+shipss.push(submarine);
+var destroyer = document.getElementById("destroyer");
+shipss.push(destroyer);
+
+//creating the button to click on to rotate
+//to rotate the ships when clicked on them
+for (var i = 0; i < shipss.length; i++) {
+    var divClick = document.createElement("div");
+    divClick.setAttribute("id", "r" + i);
+    //you call the function rotate ship here becouse in the function you explain that when the div inside is clicked
+    //you get the parent div id and you change that id at the end of that function
+    divClick.addEventListener('click', rotateShip);
+    divClick.textContent = "O";
+    console.log(i)
+    shipss[i].appendChild(divClick);
+
+}
+
+
+//var width = document.querySelectorAll("div[data-width]")
+var alltd = document.getElementsByTagName("td");
+
+battleship.addEventListener('dragstart', dragStart);
+battleship.addEventListener('dragend', dragEnd);
+
+carrier.addEventListener('dragstart', dragStart);
+carrier.addEventListener('dragend', dragEnd);
+
+patrolBoat.addEventListener('dragstart', dragStart);
+patrolBoat.addEventListener('dragend', dragEnd);
+
+submarine.addEventListener('dragstart', dragStart);
+submarine.addEventListener('dragend', dragEnd);
+
+destroyer.addEventListener('dragstart', dragStart);
+destroyer.addEventListener('dragend', dragEnd);
+
+
+var mainShip;
+
+
+function dragStart(event) {
+    mainShip = this;
+
+console.log(mainShip);
+    console.log('start');
+    //target is used so it gived you what is currently used based on event listener
+    selectedShips = event.target.id;
+    height = document.getElementById(event.target.id).getAttribute('data-height');
+    width = document.getElementById(event.target.id).getAttribute('data-width');
+    this.className += ' hold';
+    setTimeout(() => (this.className = 'invisible'), 0);
+
+    //  console.log(document.getElementsByClassName(selectedShips).length);
+    //    if(document.getElementsByClassName(selectedShips).length != 1) {
+    //     removeShipFromTd(tdInUse);
+    //    }
+}
+
+
+
+function dragEnd(event) {
+    console.log('End');
+
+    mainShipDisappear(this);
+
+}
 
 
 
 
 
 
+for (var td of alltd) {
+    td.addEventListener('dragover', dragOver);
+    td.addEventListener('dragenter', dragEnter);
+    td.addEventListener('dragleave', dragLeave);
+    td.addEventListener('drop', beforeDrop);
+}
+
+
+function dragOver(e) {
+    console.log(e);
+    e.preventDefault();
+    if (document.getElementsByClassName(selectedShips).length != 1 && tdInUse) {
+        removeShipFromTd(tdInUse);
+    }
+
+}
 
 
 
 
-document.getElementById("addShips").addEventListener("click",placeShips);
+
+
+function dragEnter(e) {
+    e.preventDefault();
+    console.log(e.target.id);
+    console.log(this);
+
+
+
+    if (height == 1) {
+        hoverHorizental(this, " allowed")
+
+    } else {
+        hoverVertical(this, " allowed")
+    }
+
+
+
+
+
+
+}
+
+function dragLeave() {
+    console.log("Leave");
+
+    if (height == 1) {
+
+        removeHoverOrShipHorizental(this, "allowed");
+    } else {
+
+        removeHoverOrShipVertical(this, "allowed");
+    }
+
+}
+
+
+function beforeDrop() {
+
+//    if (!conflict(this)) {
+        dragDrop(this, event);
+//    } else {
+//        console.log("error");
+//    }
+}
+
+
+function dragDrop(el, event) {
+
+    console.log(event.target.id);
+    console.log("drop");
+    el.setAttribute("class", selectedShips);
+
+
+
+
+    if (height == 1) {
+
+        printHorizentalShip(el, selectedShips);
+    } else {
+
+        printVerticalShip(el, selectedShips);
+    }
+
+
+    tdInUse = el;
+    console.log(tdInUse);
+
+
+
+    console.log(mainShip);
+
+
+
+
+
+
+}
+
+
+
+
+
+
+function rotateShip(event) {
+
+    selectedShip = document.getElementById(event.target.id).parentElement.id;
+
+    var height = document.getElementById(selectedShip).getAttribute('data-height');
+    var width = document.getElementById(selectedShip).getAttribute('data-width');
+
+    document.getElementById(selectedShip).setAttribute('data-height', width);
+    document.getElementById(selectedShip).setAttribute('data-width', height);
+
+
+}
+
+
+
+
+
+function printHorizentalShip(thisTD, currentShipSelected) {
+    console.log(currentShipSelected)
+
+var shipData={
+"type":"",
+"location":[]
+}
+
+
+var tdHorizentalids = [];
+    var theId = thisTD.getAttribute("id");
+    thisTD.setAttribute("data-ship", "true")
+    //to push the id of the current cell as well , before adding this line you would only get the id of the next
+    //cells ad not the actual cell that you dropped something on
+    tdHorizentalids.push(theId);
+    console.log(theId);
+    document.getElementById(theId).setAttribute("draggable", "true");
+    var width = document.getElementById(selectedShips).getAttribute('data-width');
+
+
+    for (var i = 0; i < (width - 1); i++) {
+        var tdNext = document.getElementById(theId).nextSibling;
+        tdNext.setAttribute("draggable", "true");
+        tdNext.setAttribute("class", currentShipSelected);
+        tdNext.setAttribute("data-ship", "true");
+
+        var tdId = tdNext.getAttribute("id");
+        tdHorizentalids.push(tdId);
+        theId = tdId;
+
+
+    }
+    console.log(tdHorizentalids);
+    shipData["type"]= currentShipSelected;
+    shipData["location"] = tdHorizentalids;
+    shipsPlaces.push(shipData);
+
+
+}
+
+function printVerticalShip(thisTD, currentShipSelected) {
+
+var shipData={
+"type":"",
+"location":[]
+}
+    var height = document.getElementById(selectedShips).getAttribute('data-height');
+var idsOfVerticalCells = [];
+    var theId = thisTD.getAttribute("id");
+    console.log(theId);
+    idsOfVerticalCells.push(theId);
+    //you need to make the actual td draggable to be able to move the ship on the grid
+    thisTD.setAttribute("draggable", "true");
+    thisTD.setAttribute("data-ship", "true");
+
+    //console.log(typeof(theId));
+    var splitId = theId.split("");
+    //console.log(splitId);
+    var splittedAlphabetToString = ([splitId[0]].toString());
+    var index = (gridRows.indexOf(splittedAlphabetToString));
+    //    console.log(index);
+
+
+
+
+    for (i = 0; i < (height - 1); i++) {
+        index = index + 1;
+        console.log(index);
+        var valueOfCurrentIndex = gridRows[index];
+        console.log(valueOfCurrentIndex);
+        console.log(splitId);
+        //for the last colum becouse the id has a length of three when splited "A" "1" "0"
+        if (splitId.length == 3) {
+            var tdOfNextCell = document.getElementById(gridRows[index] + splitId[1] + splitId[2])
+        } else {
+            var tdOfNextCell = document.getElementById(gridRows[index] + splitId[1]);
+            console.log(tdOfNextCell);
+        }
+        tdOfNextCell.setAttribute("class", currentShipSelected);
+        //you need to make the actual td draggable to be able to move the ship on the grid
+        //if you comment this line you can drag the ships over in the grid
+        tdOfNextCell.setAttribute("draggable", "true");
+        tdOfNextCell.setAttribute("data-ship", "true");
+
+
+        var idOfNextCells = tdOfNextCell.getAttribute("id");
+        console.log(idOfNextCells);
+        idsOfVerticalCells.push(idOfNextCells);
+
+    }
+    console.log(idsOfVerticalCells);
+     shipData["type"]= currentShipSelected;
+        shipData["location"] = idsOfVerticalCells;
+        shipsPlaces.push(shipData);
+
+
+}
+
+
+function hoverHorizental(thisTD, currentClass) {
+    var width = document.getElementById(selectedShips).getAttribute('data-width');
+    var theId = thisTD.getAttribute("id");
+    thisTD.className += currentClass;
+
+    // thisTD.classList.remove("hovered");
+
+    for (var i = 0; i < (width - 1); i++) {
+        var tdNext = document.getElementById(theId).nextSibling;
+        tdNext.className += currentClass;
+        var tdId = tdNext.getAttribute("id");
+        theId = tdId;
+    }
+
+
+
+}
+
+function hoverVertical(thisTD, currentClass) {
+    var height = document.getElementById(selectedShips).getAttribute('data-height');
+
+    var theId = thisTD.getAttribute("id");
+    thisTD.className += currentClass;
+
+    var splitId = theId.split("");
+
+    var splittedAlphabetToString = ([splitId[0]].toString());
+    var index = (gridRows.indexOf(splittedAlphabetToString));
+
+    for (i = 0; i < (height - 1); i++) {
+        index = index + 1;
+
+        var valueOfCurrentIndex = gridRows[index];
+
+        if (splitId.length == 3) {
+            var tdOfNextCell = document.getElementById(gridRows[index] + splitId[1] + splitId[2])
+        } else {
+            var tdOfNextCell = document.getElementById(gridRows[index] + splitId[1]);
+        }
+
+        tdOfNextCell.className += currentClass;
+        tdOfNextCell.removeAttribute("data-ship");
+
+        var idOfNextCells = tdOfNextCell.getAttribute("id");
+
+    }
+
+}
+
+function removeHoverOrShipHorizental(thisTD, currentClass) {
+
+    var width = document.getElementById(selectedShips).getAttribute('data-width');
+    var theId = thisTD.getAttribute("id");
+    thisTD.classList.remove(currentClass);
+
+    for (var i = 0; i < (width - 1); i++) {
+        var tdNext = document.getElementById(theId).nextSibling;
+        tdNext.classList.remove(currentClass);
+        var tdId = tdNext.getAttribute("id");
+        tdNext.removeAttribute("data-ship");
+        theId = tdId;
+    }
+
+
+}
+
+function removeHoverOrShipVertical(thisTD, currentClass) {
+
+    var height = document.getElementById(selectedShips).getAttribute('data-height');
+
+    var theId = thisTD.getAttribute("id");
+    thisTD.classList.remove(currentClass);
+
+    var splitId = theId.split("");
+
+    var splittedAlphabetToString = ([splitId[0]].toString());
+    var index = (gridRows.indexOf(splittedAlphabetToString));
+
+    for (i = 0; i < (height - 1); i++) {
+        index = index + 1;
+
+        var valueOfCurrentIndex = gridRows[index];
+
+        if (splitId.length == 3) {
+            var tdOfNextCell = document.getElementById(gridRows[index] + splitId[1] + splitId[2])
+        } else {
+            var tdOfNextCell = document.getElementById(gridRows[index] + splitId[1]);
+        }
+
+        tdOfNextCell.classList.remove(currentClass);
+
+        var idOfNextCells = tdOfNextCell.getAttribute("id");
+
+    }
+
+}
+
+
+function removeShipFromTd(thisTD) {
+
+    thisTD.classList.remove(selectedShips);
+    thisTD.removeAttribute("data-ship");
+    var theId = thisTD.getAttribute("id");
+
+    if (width > 1) {
+        removeHoverOrShipHorizental(thisTD, selectedShips);
+    }
+    if (height > 1) {
+
+        removeHoverOrShipVertical(thisTD, selectedShips);
+
+    }
+
+
+}
+
+function mainShipDisappear(realShip) {
+    var tdOccupied = document.getElementsByClassName(selectedShips);
+    console.log(tdOccupied);
+    console.log(selectedShips);
+
+    if (tdOccupied.length != 0) {
+        realShip.style.display = "none";
+        console.log("disappear");
+    } else {
+
+
+        realShip.setAttribute("class", selectedShips);
+        console.log("reappear");
+
+    }
+
+}
+
+
+
+
+//function conflict(thisTD) {
+//
+//    var conflict;
+//
+//    if (width > 1) {
+//        var tdHorizental = [];
+//        var theId = thisTD.getAttribute("id");
+//        tdHorizental.push(thisTD);
+//        for (var i = 0; i < (width - 1); i++) {
+//            var tdNext = document.getElementById(theId).nextSibling;
+//            var tdId = tdNext.getAttribute("id");
+//            tdHorizental.push(tdNext);
+//            theId = tdId;
+//        }
+//        for (i = 0; i < tdHorizental.length; i++) {
+//
+//
+//            if (tdHorizental[i].getAttribute("id") != null) {
+//console.log(tdHorizental[i].hasAttribute("data-ship"));
+//                if (tdHorizental[i].hasAttribute("data-ship")) {
+//                        console.log('true');
+//                    conflict = true;
+//                } else {
+//                    console.log('false');
+//                    conflict = false;
+//                }
+//            } else {
+//                conflict = true;
+//            }
+//
+//        }
+//    }
+//
+//    return conflict;
+//
+//}
+
+
+//end of javascript code for darg and drop implementing ships
+
+
+
+
+
+var shipsPlaces =[];
+
+
+document.getElementById("addShips").addEventListener("click",function(){
+
+
+placeShips();
+
+});
 
 //hard coded this to test if fetch is working
-var shipsPlaces =[
-{"type":"submarine",
-"location":["A1","A2","A3"]},
-{"type":"carrier",
-"location":["B1","B2","B3"]},
-{"type":"battleship",
-"location":["G4","G5","G6"]},
-{"type":"destroyer",
-"location":["C1","C2","C3"]},
-{"type":"patrolBoat",
-"location":["E1","E2","E3"]}
-
-];
+//var shipsPlaces =[
+//{"type":"submarine",
+//"location":["A1","A2","A3"]},
+//{"type":"carrier",
+//"location":["B1","B2","B3"]},
+//{"type":"battleship",
+//"location":["G4","G5","G6"]},
+//{"type":"destroyer",
+//"location":["C1","C2","C3"]},
+//{"type":"patrolBoat",
+//"location":["E1","E2","E3"]}
+//
+//];
 
 
 
@@ -259,4 +751,92 @@ fetch('/api/games/players/'+id+'/ships' , {
        console.log('parsing failed', ex)
    });
 
+   }
+
+
+
+//to add salvos in the second table dinamically
+var salvoPlacementTDs = document.querySelectorAll('[data-salvo]')
+
+    for(var td of salvoPlacementTDs){
+   td.addEventListener("click",addSalvo);
+    }
+
+
+var salvosPlaces = [];
+
+var salvosForEachTurn ={
+"location":[]}
+
+function addSalvo(e){
+
+if(e.target.className == "salvoShots"){
+e.target.classList.remove("salvoShots");
+console.log(e.target.id);
+var theIndex = salvosPlaces[0].location.indexOf(e.target.id);
+console.log(theIndex);
+if(theIndex > -1){
+salvosPlaces[0].location.splice(theIndex,1);
+}
+
+
+}else{
+    e.target.className = "salvoShots";
+    salvosForEachTurn["location"].push(e.target.id);
+
+   }
+
+
+   console.log(salvosPlaces);
+}
+
+
+
+salvosPlaces.push(salvosForEachTurn);
+
+
+
+
+
+
+
+   document.getElementById("addSalvos").addEventListener("click",function(){
+
+//   salvosPlaces=[
+//   {"turn":1 , "location":["A1","B2"]},
+//   {"turn":2 , "location":["C1","D2"]},
+//   {"turn":3 , "location":["E3","F5"]},
+//   {"turn":4 , "location":["D4","C7"]},
+//   {"turn":5 , "location":["C4","B7"]}
+//   ]
+
+console.log("added")
+
+
+   placeSalvos();
+   })
+
+
+
+
+
+   function placeSalvos(){
+
+   fetch('/api/games/players/'+id+'/salvos' , {
+          credentials: 'include',
+          method: 'POST',
+          headers: {
+
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(salvosPlaces)
+      }).then(function(response) {
+          return response.json();
+      }).then(function(json) {
+       positionShips();
+       location.reload();
+          console.log('parsed json', json)
+      }).catch(function(ex) {
+          console.log('parsing failed', ex)
+      });
    }
