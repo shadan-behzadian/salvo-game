@@ -21,6 +21,7 @@ fetch("/api/game_view/" + id, {
 //       app1.data = json;
         console.log(json);
         data = json.gamePlayers;
+        console.log(data);
      var ships = json.ships;
 
     for (let ship of ships){
@@ -31,10 +32,23 @@ fetch("/api/game_view/" + id, {
    console.log(app1.shipsInfo);
    positionShips();
 
-   app1.you = json.gamePlayers[0].player.email;
-if(  data.length == 2){
-    app1.opponent = json.gamePlayers[1].player.email;
+
+if(data[0].Id == id){
+app1.you = data[0].player.email;
+if(data.length == 2){
+app1.opponent = data[1].player.email;
 }
+}else{
+app1.you = data[1].player.email
+if(data.length == 2){
+app1.opponent = data[0].player.email}
+}
+
+
+//   app1.you = json.gamePlayers[0].player.email;
+//if(  data.length == 2){
+//    app1.opponent = json.gamePlayers[1].player.email;
+//}
     var salvoes = json.salvoes;
 
     for(let salvo of salvoes){
@@ -95,6 +109,7 @@ var app2 = new Vue({
                               }else{
                                td.textContent = gridRows[i].toLowerCase();
                                tr.appendChild(td);
+
                               }
 
                 }else{
@@ -104,6 +119,7 @@ var app2 = new Vue({
                  if(id == "grid"){
                  td.setAttribute("id", gridRows[i]+j);
                                     tr.appendChild(td);
+                                    td.setAttribute("data-only","ships");
                                  }else{
                                  //you had to make these ids lowercase because in html the ids should be unique and before
                                  //you already have capital letter ids
@@ -150,7 +166,7 @@ function positionShips(){
 
 
 function positionSalvos(salvo) {
-
+console.log("hi we are hereee");
     for(i=0; i<salvo.length ; i++){
 //data is a global variableon top of the page   data = json.gamePlayers;
 //here you are getting the gameplayer id of each positon of salvo
@@ -174,12 +190,12 @@ document.getElementById(playersId[j][turn][k].toLowerCase()).setAttribute("class
 document.getElementById(playersId[j][turn][k].toLowerCase()).textContent = turn;
 //otherwise show them on the main table(the shots of enemmy)
 }else{
-//if the posotion of shots == the positin of already existing ships show the shots: sho you check if that position
+//if the posotion of shots == the positin of already existing ships show the shots: so you check if that position
 //already has an attribute "class"  to make sure there was a ship there to show the shots
-if(document.getElementById(playersId[j][turn][k]).hasAttribute("class")){
-document.getElementById(playersId[j][turn][k]).setAttribute("class","salvoShots");
+if(document.getElementById(playersId[j][turn][k].toUpperCase()).hasAttribute("class")){
+document.getElementById(playersId[j][turn][k].toUpperCase()).setAttribute("class","salvoShots");
 //to show the turn on each of shots
-document.getElementById(playersId[j][turn][k]).textContent = turn;
+document.getElementById(playersId[j][turn][k].toUpperCase()).textContent = turn;
 }
 }
 
@@ -247,7 +263,9 @@ for (var i = 0; i < shipss.length; i++) {
 
 
 //var width = document.querySelectorAll("div[data-width]")
-var alltd = document.getElementsByTagName("td");
+var alltd = document.querySelectorAll('[data-only]');
+
+console.log(alltd);
 
 battleship.addEventListener('dragstart', dragStart);
 battleship.addEventListener('dragend', dragEnd);
@@ -763,36 +781,61 @@ var salvoPlacementTDs = document.querySelectorAll('[data-salvo]')
     }
 
 
-var salvosPlaces = [];
 
-var salvosForEachTurn ={
-"location":[]}
+
+var salvosForEachTurn =[]
 
 function addSalvo(e){
 
 if(e.target.className == "salvoShots"){
 e.target.classList.remove("salvoShots");
 console.log(e.target.id);
-var theIndex = salvosPlaces[0].location.indexOf(e.target.id);
+//position zero becouse there is only one object inside it
+//locaton is an array inside that obeject its the key and tehvalue is an object
+var theIndex = salvosForEachTurn.indexOf(e.target.id);
+
 console.log(theIndex);
 if(theIndex > -1){
-salvosPlaces[0].location.splice(theIndex,1);
+salvosForEachTurn.splice(theIndex,1);
 }
 
 
 }else{
-    e.target.className = "salvoShots";
-    salvosForEachTurn["location"].push(e.target.id);
+        if(salvosForEachTurn.length < 5){
+          e.target.className = "salvoShots";
+          salvosForEachTurn.push(e.target.id);
+        }else{
 
+        console.log("no more please");
+
+        var modal = document.getElementById('myModal');
+
+            modal.style.display = "block";
+
+
+         // Get the <span> element that closes the modal
+         var span = document.getElementsByClassName("close")[0];
+
+         span.addEventListener("click",function(){
+          modal.style.display = "none";})
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+             modal.style.display = "none";
+    }
+}
+
+        }
    }
 
 
-   console.log(salvosPlaces);
+console.log(salvosForEachTurn);
 }
 
 
 
-salvosPlaces.push(salvosForEachTurn);
+
 
 
 
@@ -814,6 +857,8 @@ console.log("added")
 
 
    placeSalvos();
+
+
    })
 
 
@@ -829,11 +874,12 @@ console.log("added")
 
               'Content-Type': 'application/json'
           },
-          body: JSON.stringify(salvosPlaces)
+          body: JSON.stringify(salvosForEachTurn)
       }).then(function(response) {
           return response.json();
+
       }).then(function(json) {
-       positionShips();
+
        location.reload();
           console.log('parsed json', json)
       }).catch(function(ex) {

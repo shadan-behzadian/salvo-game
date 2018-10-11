@@ -116,7 +116,7 @@ public class SalvoController {
 
 
    @RequestMapping(path = "/games/players/{gamePlayerId}/salvos",method = RequestMethod.POST)
-public ResponseEntity<Map<String,Object>> placesalvo(Authentication authentication,@PathVariable Long gamePlayerId, @RequestBody Set<Salvo> salvos){
+public ResponseEntity<Map<String,Object>> placesalvo(Authentication authentication,@PathVariable Long gamePlayerId, @RequestBody List<String> salvos){
 
        GamePlayer gamePlayerWhoPlayes = gamePlayerRepository.getOne(gamePlayerId);
         if(authentication == null){
@@ -129,15 +129,17 @@ public ResponseEntity<Map<String,Object>> placesalvo(Authentication authenticati
         if(authentication.getName() != gamePlayerWhoPlayes.getPlayer().getUserName()){
             return new ResponseEntity<>(makeMap("error","you are not supposed to be in this game!!"),HttpStatus.UNAUTHORIZED);
         }
-        
 
+        if(salvos.size() > 5){
+            return new ResponseEntity<>(makeMap("error","maximum number of shots per turn is 5"),HttpStatus.UNAUTHORIZED);
+        }
 
+        if(salvos.size() == 0){
+            return new ResponseEntity<>(makeMap("error","you need to at least fire one salvo"),HttpStatus.UNAUTHORIZED);
+        }
         else{
-            for(Salvo eachSalvo : salvos){
-                gamePlayerWhoPlayes.addSalvo(eachSalvo);
-                salvoRepository.save(eachSalvo);
+           salvoRepository.save(new Salvo(gamePlayerWhoPlayes.getSalvos().size()+1,salvos,gamePlayerWhoPlayes));
 
-            }
         }
         return new ResponseEntity<>(makeMap("OK","Salvo is placed"),HttpStatus.CREATED);
    }
