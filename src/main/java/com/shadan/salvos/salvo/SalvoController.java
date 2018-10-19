@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 //controller reads urls sent to the sever to find the approprate java code to create json
 //you are creating a pathway for the controller to read from by adding requestmapping(/api) this means it will look for
@@ -329,6 +330,14 @@ Game game = gameRepository.findOne(gameId);
     public Map<String, Object> currentPlayer(GamePlayer gamePlayer){
         Map<String, Object> dto = new LinkedHashMap<>();
 
+
+        Long currentPlayerID = gamePlayer.getPlayer().getId();
+        GamePlayer opponent = getOpponentGamePlayer(gamePlayer.getGame(),gamePlayer.getPlayer().getId());
+        GamePlayer gamePlayerWhoPlays = gamePlayerRepository.findOne(currentPlayerID);
+
+
+
+
         dto.put("Id", gamePlayer.getGame().getId());
         dto.put("created", gamePlayer.getGame().getToday());
         dto.put("gamePlayers", gamePlayer.getGame().getGameplayers()
@@ -352,8 +361,88 @@ Game game = gameRepository.findOne(gameId);
                 .collect(toList())
         );
 
+       dto.put("MyHitsOnOpponent",gamePlayer.getSalvos()
+                .stream()
+                .map(salvo -> getHits(salvo))
+                .collect(toList())
+        );
+
+       dto.put("opponentHitsonMe",opponent.getSalvos()
+                       .stream()
+                       .map(salvo -> getHits(salvo))
+                       .collect(toList())
+       );
+
+        //System.out.println(getOpponentGamePlayer(gamePlayer.getGame(), gamePlayer.getPlayer().getId()));
+
         return dto;
     }
+
+
+//carrent gameplayer
+    private GamePlayer getCurrentGamePlayer(GamePlayer gamePlayer){
+        Long currentPlayerID = gamePlayer.getPlayer().getId();
+        GamePlayer gamePlayerWhoPlays = gamePlayerRepository.findOne(currentPlayerID);
+
+        return gamePlayerWhoPlays;
+    }
+
+
+//opponent
+    private GamePlayer getOpponentGamePlayer(Game game, Long currentPlayerID){
+
+        GamePlayer opponent = new GamePlayer();
+        for (GamePlayer item : game.getGameplayers()) {
+            Long playerIDtoCompare = item.getPlayer().getId();
+            if (playerIDtoCompare != currentPlayerID) {
+                opponent = item;
+            }
+        }
+        return opponent;
+    }
+
+
+    private List<String> getShipLocations(GamePlayer gamePlayer){
+        Set<Ship> shipLocations = gamePlayer.getShip();
+
+          return shipLocations.stream()
+                .map(ship -> ship.getLocation())
+                .flatMap(eachShipArray -> eachShipArray.stream())
+//                  .map(eachShip -> eachShip.toUpperCase())
+                .collect(Collectors.toList());
+
+    }
+
+    private List<String> getSalvoLocations(GamePlayer gamePlayer){
+        Set<Salvo> salvoLocations = gamePlayer.getSalvos();
+
+        return salvoLocations.stream()
+                .map(salvo -> salvo.getLocation())
+                .flatMap(eachSalvoArray -> eachSalvoArray.stream())
+                .map(eachSalvo -> eachSalvo.toUpperCase())
+                .collect(Collectors.toList());
+    }
+
+private Set<String> getHits(Salvo salvo){
+    GamePlayer opponent = getOpponentGamePlayer(salvo.getGamePlayer().getGame(), salvo.getGamePlayer().getPlayer().getId());
+    GamePlayer currentGamePlayer = getCurrentGamePlayer(salvo.getGamePlayer());
+
+    if(opponent != null){
+
+        List<String> salvoLocations = salvo.getLocation().stream().map(s -> s.toUpperCase()).collect(toList());
+        List<String> opponentShips = getShipLocations(opponent);
+
+        return salvoLocations.stream()
+                .filter(salvoLoc -> opponentShips.contains(salvoLoc))
+                .collect(Collectors.toSet());
+    }
+    else{
+       return null;
+    }
+
+}
+
+
 
 
 
