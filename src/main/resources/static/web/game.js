@@ -2,6 +2,7 @@
 //these following 4 lines you found them online to get "how to get a url variable in javascript"
 //variable is gp=1 in the link and you want to find what gp equals to everytime.
 var data;
+var test;
 var gridRows = ["","A","B","C","D","E","F","G","H","I","J","H","I","J","k","L","M"];
 var url_string = window.location.href;
 var url = new URL(url_string);
@@ -20,6 +21,7 @@ fetch("/api/game_view/" + id, {
 
 //       app1.data = json;
         console.log(json);
+        test = json;
         data = json.gamePlayers;
         console.log(data);
      var ships = json.ships;
@@ -57,6 +59,13 @@ app1.opponent = data[0].player.email}
 
     positionSalvos(salvoes);
 
+//
+//    app3.MyHitsOnOpponent = json.MyHitsOnOpponent;
+//console.log(app3.MyHitsOnOpponent)
+
+showHits();
+
+
     })
     .catch(function(ex) {
            console.log('parsing failed', ex)
@@ -84,7 +93,21 @@ var app2 = new Vue({
     salvoInfo:[]
 
     }
-})
+});
+
+var app3 = new Vue({
+el:'#hitTable',
+data:{
+MyHitsOnOpponent:[],
+allTheHits:{}
+
+}
+});
+
+
+
+
+
 
 
 // creating the grid with a pure javascript code
@@ -885,4 +908,50 @@ console.log("added")
       }).catch(function(ex) {
           console.log('parsing failed', ex)
       });
+   }
+
+
+
+
+   function showHits(){
+
+ var allTheHits = {};
+
+        for(var i = 0; i < test.MyHitsOnOpponent.length; i ++){
+
+            for(var key in test.MyHitsOnOpponent[i]){
+
+
+              // console.log(test.MyHitsOnOpponent[i][key].length);
+              console.log(key);
+
+                var theHits = [];
+
+                for(var j = 0; j < test.MyHitsOnOpponent[i][key].length; j ++){
+
+                var shipName = "";
+
+                     for(var keys in test.MyHitsOnOpponent[i][key][j]){
+
+                        console.log("Hit Pos: " + keys + " Ship: "+test.MyHitsOnOpponent[i][key][j][keys]);
+
+                        shipName = test.MyHitsOnOpponent[i][key][j][keys];
+                        theHits.push(keys);
+
+
+
+                                              console.log(allTheHits);
+
+}
+                            allTheHits[key] = {"turn": key,
+                                               "shipType":shipName,
+                                               "hitPositions" : theHits.toString()}
+
+                }
+            }
+
+        }
+
+app3.allTheHits = allTheHits;
+
    }

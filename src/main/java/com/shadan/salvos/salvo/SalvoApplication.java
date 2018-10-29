@@ -373,6 +373,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/web/games.css").permitAll()
 				.antMatchers("/api/games").permitAll()
 				.antMatchers("/api/players").permitAll()
+				//to see h2 data base
+				.antMatchers("/h2-console/**").permitAll()
 				.anyRequest().fullyAuthenticated();
 		//.and()
 		//The and() starts a new section of rules. Every section has to
@@ -402,6 +404,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
 		// if logout is successful, just send a success response
 		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+
+		//to see h2 data base
+		http.headers().frameOptions().disable();
 
 	}
 // clearAuthenticationAttributes, is defined to remove the flag Spring sets when

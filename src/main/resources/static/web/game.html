@@ -29,11 +29,44 @@
 <!--    horizental ships-->
 
 
+<div id="hitTable">
+<table>
+    <tbody>
+    <tr>
+        <td rowspan="2">Turn</td>
+        <td rowspan="2">ship</td>
+        <td colspan="2">Hits on Oopponent</td>
+        <td colspan="2">Hits on you</td>
+    </tr>
+
+    <tr>
+
+        <td>Hits</td>
+        <td>left</td>
+        <td>Hits</td>
+        <td>left</td>
+    </tr>
+    <tr v-for="hits in allTheHits">
+
+       <!--<td v-for="(value, key) in allTheHits">{{key}}</td>-->
+       <td v-for="key in hits">{{key}}</td>
+
+
+
+    </tr>
+
+
+    </tbody>
+
+</table>
+</div>
+
+
+
+
+
 
 <!--implementing ships html code --------------------------------------------------------->
-
-
-
 
 
 

@@ -363,13 +363,17 @@ Game game = gameRepository.findOne(gameId);
 
        dto.put("MyHitsOnOpponent",gamePlayer.getSalvos()
                 .stream()
+               .sorted((salvo1,salvo2)->salvo1.getTurn().compareTo(salvo2.getTurn()))
                 .map(salvo -> getHits(salvo))
+
                 .collect(toList())
         );
 
        dto.put("opponentHitsonMe",opponent.getSalvos()
                        .stream()
+               .sorted((salvo1,salvo2)->salvo1.getTurn().compareTo(salvo2.getTurn()))
                        .map(salvo -> getHits(salvo))
+
                        .collect(toList())
        );
 
@@ -423,28 +427,52 @@ Game game = gameRepository.findOne(gameId);
                 .collect(Collectors.toList());
     }
 
-private Set<String> getHits(Salvo salvo){
+private Map<String, Object> getHits(Salvo salvo){
     GamePlayer opponent = getOpponentGamePlayer(salvo.getGamePlayer().getGame(), salvo.getGamePlayer().getPlayer().getId());
     GamePlayer currentGamePlayer = getCurrentGamePlayer(salvo.getGamePlayer());
+    Map<String, Object> dto = new LinkedHashMap<>();
 
     if(opponent != null){
 
         List<String> salvoLocations = salvo.getLocation().stream().map(s -> s.toUpperCase()).collect(toList());
         List<String> opponentShips = getShipLocations(opponent);
 
-        return salvoLocations.stream()
-                .filter(salvoLoc -> opponentShips.contains(salvoLoc))
-                .collect(Collectors.toSet());
+         dto.put(salvo.getTurn().toString(),salvoLocations
+                 .stream()
+                .map(salvoLoc -> hitedShipTypes(salvoLoc, opponent))
+                .collect(Collectors.toSet()));
+        return dto;
+
     }
+
+
     else{
        return null;
     }
 
 }
 
+    public Map<String, Object> hitedShipTypes(String salvoLoc, GamePlayer opp) {
+        Map<String, Object> dto = new LinkedHashMap<>();
+
+        Set<Ship> oppShips = opp.getShip();
 
 
 
+        for (Ship ship : oppShips) {
+            if (ship.getLocation().contains(salvoLoc)) {
+                dto.put(salvoLoc, ship.getType());
+
+
+                }
+                    break;
+
+            }
+
+
+
+        return dto;
+    }
 
 
     public Map<String, Object> getGameplayer(GamePlayer gameplayer) {
